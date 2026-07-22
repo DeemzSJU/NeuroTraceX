@@ -1,0 +1,79 @@
+/**
+ * NeuroTraceX — Root App Component
+ *
+ * Sets up React Router v6 routes for all experiment pages,
+ * renders the app header and progress bar.
+ */
+
+import React from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import './App.css';
+import { useSessionContext } from './context/SessionContext';
+import { STEPS, SESSION1_TOTAL_STEPS } from './constants/experimentFlow';
+
+// Pages
+import LandingPage from './pages/LandingPage';
+import ConsentPage from './pages/ConsentPage';
+import REIPage from './pages/REIPage';
+import CRTPage from './pages/CRTPage';
+import StimulusPage from './pages/StimulusPage';
+import FreeRecallPage from './pages/FreeRecallPage';
+import StructuredQuestionsPage from './pages/StructuredQuestionsPage';
+import ThankYouPage from './pages/ThankYouPage';
+import Session2Page from './pages/Session2Page';
+import ResultsPage from './pages/ResultsPage';
+
+function App() {
+  const { currentStep } = useSessionContext();
+  const location = useLocation();
+
+  // Determine if we should show the progress bar (Session 1 only)
+  const isSession1 = currentStep >= 1 && currentStep <= SESSION1_TOTAL_STEPS;
+  const progress = isSession1 ? (currentStep / SESSION1_TOTAL_STEPS) * 100 : 0;
+
+  // Don't show header on landing page
+  const showHeader = location.pathname !== '/';
+
+  return (
+    <div className="app">
+      {showHeader && (
+        <>
+          <header className="app-header">
+            <div className="app-header__logo">
+              <div className="app-header__logo-icon">N</div>
+              NeuroTraceX
+            </div>
+            {isSession1 && (
+              <span className="app-header__step">
+                Step {currentStep} of {SESSION1_TOTAL_STEPS}
+              </span>
+            )}
+          </header>
+          {isSession1 && (
+            <div className="progress-bar">
+              <div
+                className="progress-bar__fill"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      <Routes>
+        <Route path={STEPS.LANDING.path}     element={<LandingPage />} />
+        <Route path={STEPS.CONSENT.path}     element={<ConsentPage />} />
+        <Route path={STEPS.REI.path}         element={<REIPage />} />
+        <Route path={STEPS.CRT.path}         element={<CRTPage />} />
+        <Route path={STEPS.STIMULUS.path}    element={<StimulusPage />} />
+        <Route path={STEPS.FREE_RECALL.path} element={<FreeRecallPage />} />
+        <Route path={STEPS.STRUCTURED.path}  element={<StructuredQuestionsPage />} />
+        <Route path={STEPS.THANK_YOU.path}   element={<ThankYouPage />} />
+        <Route path={STEPS.SESSION2.path}    element={<Session2Page />} />
+        <Route path={STEPS.RESULTS.path}     element={<ResultsPage />} />
+      </Routes>
+    </div>
+  );
+}
+
+export default App;

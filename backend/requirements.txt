@@ -1,0 +1,31 @@
+# Backend dependencies for NeuroTraceX
+# Install: pip install -r requirements.txt
+
+# --- Web Framework ---
+fastapi
+uvicorn[standard]
+python-multipart
+
+# --- Database ---
+sqlalchemy[asyncio]
+asyncpg
+alembic
+supabase
+
+# --- AI (lightweight — Claude API only) ---
+anthropic
+
+# --- Email ---
+resend
+
+# --- Utilities ---
+python-dotenv
+pydantic[email]
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+httpx
+
+# --- Dev / Testing ---
+pytest
+pytest-asyncio

@@ -1,0 +1,5 @@
+# Ground Truth Answer Key
+# Used to score factual recall questions (7 items)
+# Format: question_id → correct_answer
+#
+# This file will be populated after the stimulus is finalised.

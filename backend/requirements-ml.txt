@@ -1,0 +1,8 @@
+# ML / AI dependencies for NeuroTraceX
+# These are heavy (~2GB+). Install separately when ready to build divergence scoring:
+#   pip install -r requirements-ml.txt
+
+sentence-transformers
+torch
+numpy
+scikit-learn
