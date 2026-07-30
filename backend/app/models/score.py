@@ -2,7 +2,7 @@
 NeuroTraceX — Score Model
 
 Stores computed scores for each participant:
-- REI-40 subscale scores (experiential, rational)
+- REI-20 subscale scores (experiential, rational)
 - CRT score (0-3)
 - Divergence scores by question type (0-1)
 - Overall divergence (immediate and delayed)

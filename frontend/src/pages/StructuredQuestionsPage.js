@@ -8,7 +8,9 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
+import { STRUCTURED_QUESTIONS } from '../constants/structuredQuestions';
 import responseService from '../services/responseService';
+import scoreService from '../services/scoreService';
 
 function StructuredQuestionsPage() {
   const navigate = useNavigate();
@@ -21,9 +23,8 @@ function StructuredQuestionsPage() {
 
   // Determine session number from context
   const sessionNumber = currentStep === STEPS.SESSION2.id ? 2 : 1;
-
-  // Placeholder — will be populated from structuredQuestions.js
-  const totalQuestions = 20;
+  const totalQuestions = STRUCTURED_QUESTIONS.length;
+  const question = STRUCTURED_QUESTIONS[currentQ];
 
   const handleNext = async () => {
     if (!answer.trim() || submitting) return;
@@ -34,8 +35,8 @@ function StructuredQuestionsPage() {
     try {
       await responseService.submitStructuredAnswer(
         sessionId,
-        `q_${currentQ + 1}`,
-        'interpretive', // placeholder — will use real question types
+        question.id,
+        question.category,
         answer.trim(),
         responseTimeMs,
         sessionNumber
@@ -51,6 +52,12 @@ function StructuredQuestionsPage() {
           setStep(STEPS.THANK_YOU.id);
           navigate(STEPS.THANK_YOU.path);
         } else {
+          // Trigger computation before results page navigation
+          try {
+            await scoreService.computeScores(sessionId);
+          } catch (e) {
+            console.error('Computation error:', e);
+          }
           navigate(`/results/${sessionId}`);
         }
       }
@@ -59,6 +66,12 @@ function StructuredQuestionsPage() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const getCategoryColor = (cat) => {
+    if (cat === 'factual') return 'var(--color-primary-400)';
+    if (cat === 'interpretive') return 'var(--color-accent-400)';
+    return 'var(--color-text-warning)';
   };
 
   return (
@@ -72,11 +85,28 @@ function StructuredQuestionsPage() {
 
       <div className="page__content">
         <div className="card mb-6">
-          <p style={{ color: 'var(--color-text-secondary)', marginBottom: '0.5rem', fontSize: 'var(--text-sm)' }}>
-            Question {currentQ + 1}
-          </p>
-          <p style={{ fontSize: 'var(--text-lg)', color: 'var(--color-text-primary)' }}>
-            Structured question content will be loaded here once provided.
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+            <span style={{ color: 'var(--color-text-tertiary)', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
+              Question {currentQ + 1}
+            </span>
+            <span
+              style={{
+                fontSize: '0.75rem',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                letterSpacing: '0.05em',
+                padding: '0.2rem 0.6rem',
+                borderRadius: 'var(--radius-full)',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: getCategoryColor(question.category),
+                border: `1px solid ${getCategoryColor(question.category)}`,
+              }}
+            >
+              {question.category}
+            </span>
+          </div>
+          <p style={{ fontSize: 'var(--text-lg)', color: 'var(--color-text-primary)', fontWeight: 500 }}>
+            {question.text}
           </p>
         </div>
 
@@ -86,7 +116,7 @@ function StructuredQuestionsPage() {
           placeholder="Type your answer here..."
           style={{ minHeight: '150px', marginBottom: '1.5rem' }}
           autoFocus
-          key={currentQ} // Reset focus on question change
+          key={currentQ}
         />
 
         <button

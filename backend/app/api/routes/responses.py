@@ -2,7 +2,7 @@
 NeuroTraceX — Response Submission API Routes
 
 Endpoints for submitting every type of participant response:
-REI-40, CRT, free recall, structured questions, and audio events.
+REI-20, CRT, free recall, structured questions, and audio events.
 """
 
 import uuid
@@ -17,6 +17,7 @@ from app.models.response import QuestionType, Response
 from app.models.score import Score
 from app.schemas.response import (
     AudioEventSubmit,
+    VideoEventSubmit,
     CRTScoreResponse,
     CRTSubmit,
     FreeRecallSubmit,
@@ -49,19 +50,19 @@ async def _get_participant_by_session(
     return participant
 
 
-# ── REI-40 ───────────────────────────────────────────────────────────
+# ── REI-20 ───────────────────────────────────────────────────────────
 
 @router.post(
     "/rei",
     response_model=REIScoreResponse,
-    summary="Submit REI-40 answers",
+    summary="Submit REI-20 answers",
 )
 async def submit_rei(
     data: REISubmit,
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Step 2a — Submit all 40 REI Likert-scale answers.
+    Step 2a — Submit all 20 REI Likert-scale answers.
     Stores each answer as a separate response row, then computes
     and stores experiential and rational subscale scores.
     """
@@ -214,7 +215,33 @@ async def submit_structured_answer(
     return ResponseAck()
 
 
-# ── Audio Events ─────────────────────────────────────────────────────
+# ── Video & Audio Events ─────────────────────────────────────────────
+
+@router.post(
+    "/video-event",
+    response_model=ResponseAck,
+    summary="Log video playback event",
+)
+async def submit_video_event(
+    data: VideoEventSubmit,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Step 3 — Log when the video stimulus starts and stops playing.
+    """
+    participant = await _get_participant_by_session(data.session_id, db)
+
+    response = Response(
+        participant_id=participant.id,
+        question_id=data.event_type,
+        question_type=QuestionType.VIDEO_EVENT,
+        answer_text=data.timestamp.isoformat(),
+        session_number=1,
+    )
+    db.add(response)
+
+    return ResponseAck(message=f"Video {data.event_type} recorded.")
+
 
 @router.post(
     "/audio-event",
@@ -226,14 +253,14 @@ async def submit_audio_event(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Step 3 — Log when the audio stimulus starts and stops playing.
+    Step 3 — Log when the audio/video stimulus starts and stops playing (legacy endpoint).
     """
     participant = await _get_participant_by_session(data.session_id, db)
 
     response = Response(
         participant_id=participant.id,
         question_id=data.event_type,
-        question_type=QuestionType.AUDIO_EVENT,
+        question_type=QuestionType.VIDEO_EVENT,
         answer_text=data.timestamp.isoformat(),
         session_number=1,
     )

@@ -1,22 +1,22 @@
 """
-NeuroTraceX — REI-40 Scoring Logic
+NeuroTraceX — REI-20 Scoring Logic
 
 Computes the experiential (intuitive) and rational (analytical) subscale scores
-from a list of 40 Likert-scale answers (1-5), handling reverse-scored items.
+from a list of 20 Likert-scale answers (1-5), handling reverse-scored items.
 """
 
 from typing import Dict, List, Tuple
 
-# 1-indexed item numbers that are reverse-scored in the standard REI-40 instrument
+# 1-indexed item numbers that are reverse-scored in the REI-20 instrument
 REVERSE_SCORED_ITEMS = {
-    4, 6, 8, 9, 10, 12, 15, 16, 22, 25, 27, 29, 32, 33, 35, 36, 37, 38, 39
+    4, 6, 8, 9, 10, 12, 16, 18, 19, 20
 }
 
 # 1-indexed item numbers for each subscale
-RATIONAL_ABILITY_ITEMS = {1, 4, 8, 13, 14, 17, 25, 27, 30, 39}
-RATIONAL_ENGAGEMENT_ITEMS = {2, 6, 10, 16, 20, 26, 28, 32, 33, 40}
-EXPERIMENTAL_ABILITY_ITEMS = {3, 5, 18, 19, 21, 34, 35, 36, 37, 38}
-EXPERIMENTAL_ENGAGEMENT_ITEMS = {7, 9, 11, 12, 15, 22, 23, 24, 29, 31}
+RATIONAL_ABILITY_ITEMS = {1, 4, 11, 16, 17}
+RATIONAL_ENGAGEMENT_ITEMS = {2, 6, 9, 14, 18}
+EXPERIMENTAL_ABILITY_ITEMS = {3, 5, 13, 19, 20}
+EXPERIMENTAL_ENGAGEMENT_ITEMS = {7, 8, 10, 12, 15}
 
 
 def compute_rei_scores(answers: List[int]) -> Tuple[float, float]:
@@ -24,14 +24,14 @@ def compute_rei_scores(answers: List[int]) -> Tuple[float, float]:
     Computes experiential and rational subscale scores.
     
     Args:
-        answers: A list of 40 integers representing Likert responses (1 to 5).
-                 Answers should be ordered from item 1 to item 40.
+        answers: A list of 20 integers representing Likert responses (1 to 5).
+                 Answers should be ordered from item 1 to item 20.
                  
     Returns:
         Tuple of (experiential_score, rational_score) as floats from 1.0 to 5.0.
     """
-    if len(answers) != 40:
-        raise ValueError("Exactly 40 answers are required for REI-40 scoring.")
+    if len(answers) != 20:
+        raise ValueError("Exactly 20 answers are required for REI-20 scoring.")
     
     # Check that all answers are in the valid 1-5 range
     for idx, ans in enumerate(answers):
@@ -58,8 +58,9 @@ def compute_rei_scores(answers: List[int]) -> Tuple[float, float]:
         elif i in EXPERIMENTAL_ABILITY_ITEMS or i in EXPERIMENTAL_ENGAGEMENT_ITEMS:
             experiential_scores.append(adjusted_score)
             
-    # Calculate averages (each scale has 20 items)
+    # Calculate averages (each scale has 10 items)
     avg_rational = sum(rational_scores) / len(rational_scores) if rational_scores else 0.0
     avg_experiential = sum(experiential_scores) / len(experiential_scores) if experiential_scores else 0.0
     
     return avg_experiential, avg_rational
+

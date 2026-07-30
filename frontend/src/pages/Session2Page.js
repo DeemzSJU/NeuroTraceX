@@ -75,8 +75,8 @@ function Session2Page() {
         <div className="card mb-6">
           <h3 style={{ marginBottom: '1rem' }}>What to expect</h3>
           <p style={{ color: 'var(--color-text-secondary)' }}>
-            You will answer the same 20 questions about the audio recording
-            you listened to 48 hours ago — this time entirely from memory.
+            You will answer the same 20 questions about the video recording
+            you watched 48 hours ago — this time entirely from memory.
             This should take about 10 minutes.
           </p>
         </div>

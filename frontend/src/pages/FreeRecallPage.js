@@ -9,6 +9,8 @@ import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
 import responseService from '../services/responseService';
 
+import Timer from '../components/common/Timer';
+
 function FreeRecallPage() {
   const navigate = useNavigate();
   const { sessionId, setStep, setLoading, isLoading } = useSessionContext();
@@ -55,14 +57,14 @@ function FreeRecallPage() {
     <div className="page animate-fade-in">
       <div className="page__header">
         <h1>Free Recall</h1>
-        <p>Describe everything you remember about what you just heard.</p>
+        <p>Describe everything you remember about what you just watched.</p>
       </div>
 
       <div className="page__content">
         <div className="card mb-6">
           <p className="text-sm" style={{ color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
             In as much detail as possible, describe everything you remember about what
-            you just heard. Include what happened, what was said, how the characters
+            you just watched. Include what happened, what was said, how the characters
             seemed to feel, and anything else that stands out to you.
           </p>
           <p className="text-sm" style={{ color: 'var(--color-text-accent)' }}>
@@ -79,10 +81,7 @@ function FreeRecallPage() {
         />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <span className="text-mono text-sm" style={{ color: elapsed >= MIN_SECONDS ? 'var(--color-text-success)' : 'var(--color-text-warning)' }}>
-            {formatTime(elapsed)} elapsed
-            {elapsed < MIN_SECONDS && ` (${formatTime(MIN_SECONDS - elapsed)} remaining)`}
-          </span>
+          <Timer seconds={elapsed} minSeconds={MIN_SECONDS} />
           <span className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
             {text.split(/\s+/).filter(Boolean).length} words
           </span>

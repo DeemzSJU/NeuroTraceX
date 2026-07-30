@@ -12,8 +12,8 @@ asyncpg
 alembic
 supabase
 
-# --- AI (lightweight — Claude API only) ---
-anthropic
+# --- AI (Groq API — Free Tier) ---
+groq
 
 # --- Email ---
 resend

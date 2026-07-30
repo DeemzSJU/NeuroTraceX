@@ -13,13 +13,13 @@ from pydantic import BaseModel, Field
 # --- Request Schemas ---
 
 class REISubmit(BaseModel):
-    """Submit all 40 REI items at once."""
+    """Submit all 20 REI items at once."""
     session_id: uuid.UUID
     answers: list[int] = Field(
         ...,
-        min_length=40,
-        max_length=40,
-        description="40 Likert values (1-5), one per REI item.",
+        min_length=20,
+        max_length=20,
+        description="20 Likert values (1-5), one per REI item.",
     )
 
 
@@ -54,6 +54,13 @@ class StructuredAnswerSubmit(BaseModel):
     session_number: int = Field(..., ge=1, le=2)
 
 
+class VideoEventSubmit(BaseModel):
+    """Log video playback start/end timestamps (Step 3)."""
+    session_id: uuid.UUID
+    event_type: str = Field(..., pattern="^(playback_start|playback_end)$")
+    timestamp: datetime
+
+
 class AudioEventSubmit(BaseModel):
     """Log audio playback start/end timestamps (Step 3)."""
     session_id: uuid.UUID
@@ -73,7 +80,7 @@ class REIScoreResponse(BaseModel):
     """Computed REI scores returned after REI submission."""
     experiential_score: float
     rational_score: float
-    message: str = "REI-40 scores computed."
+    message: str = "REI-20 scores computed."
 
 
 class CRTScoreResponse(BaseModel):

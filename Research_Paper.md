@@ -98,20 +98,20 @@ The target sample is 60 participants, recruited with the expectation of retainin
 
 The participant reads the full consent form on screen, confirms they understand it by checking a box, and provides their first name and email address. The email is used solely to send the 48-hour Session 2 reminder link and is stored separately from all response data.
 
-### Step 2 — Cognitive Style Measurement (REI-40 \+ CRT)
+### Step 2 — Cognitive Style Measurement (REI-20 \+ CRT)
 
-Rational Experiential Inventory — 40 items (REI-40) The REI-40 is a validated psychometric instrument developed by Epstein et al. (1996) that measures cognitive style across two independent dimensions:
+Rational Experiential Inventory — 20 items (REI-20) The REI-20 is a validated psychometric instrument developed by Pacini & Epstein (1999) that measures cognitive style across two independent dimensions:
 
-* Experiential subscale (20 items): captures the tendency to rely on intuition, gut feeling, and emotion-based processing. Example item: "I trust my initial feelings about people."  
-* Rational subscale (20 items): captures the tendency toward deliberate, logical, analytical thinking. Example item: "I prefer to think things through carefully before making a decision."
+* Experiential subscale (10 items): captures the tendency to rely on intuition, gut feeling, and emotion-based processing. Example item: "I trust my initial feelings about people."  
+* Rational subscale (10 items): captures the tendency toward deliberate, logical, analytical thinking. Example item: "I have a logical mind."
 
 Each item is rated on a 5-point Likert scale (1 \= definitely not true of myself, 5 \= definitely true of myself). Several items are reverse-scored per the original instrument's scoring key. The two subscale scores are computed separately and treated as independent variables in the analysis — a participant can score high on both, low on both, or high on one and low on the other.
 
-The REI-40 is displayed as a single scrollable page. All 40 items must be answered before the participant can proceed. Responses are timestamped and submitted to the backend via the Flask API, which immediately computes and stores both subscale scores in Supabase.
+The REI-20 is displayed as a single scrollable page. All 20 items must be answered before the participant can proceed. Responses are timestamped and submitted to the backend via the API, which immediately computes and stores both subscale scores in Supabase.
 
 Cognitive Reflection Test — 3 items (CRT) The CRT, developed by Frederick (2005), is a short behavioral measure of analytical thinking. It presents three problems that have an intuitively appealing but incorrect answer — only participants who suppress the impulsive response and think carefully arrive at the correct answer. Example: "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?" (The intuitive answer is $0.10; the correct answer is $0.05.)
 
-The CRT score (0–3) serves as a secondary, behavioral measure of cognitive style, used to cross-validate the self-report REI-40 scores. The CRT is displayed immediately after the REI-40 on the same page.
+The CRT score (0–3) serves as a secondary, behavioral measure of cognitive style, used to cross-validate the self-report REI-20 scores. The CRT is displayed immediately after the REI-20 on the same page.
 
 ### Step 3 — The Shared Stimulus
 
@@ -181,7 +181,7 @@ For every participant, the following data is stored in Supabase:
 | ----- | ----- | ----- |
 | Session ID (anonymous) | participants table | Random UUID |
 | Consent timestamp | participants table | Datetime |
-| REI-40 answers (all 40\) | responses table | Integer 1–5 per item |
+| REI-20 answers (all 20\) | responses table | Integer 1–5 per item |
 | REI experiential score | scores table | Float 1–5 |
 | REI rational score | scores table | Float 1–5 |
 | CRT score | scores table | Integer 0–3 |

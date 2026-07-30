@@ -15,7 +15,7 @@
 ### Responses
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/responses/rei` | Submit REI-40 answers |
+| POST | `/responses/rei` | Submit REI-20 answers |
 | POST | `/responses/crt` | Submit CRT answers |
 | POST | `/responses/free-recall` | Submit free recall text |
 | POST | `/responses/structured` | Submit structured question answer |

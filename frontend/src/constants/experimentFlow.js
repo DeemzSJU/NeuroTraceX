@@ -10,7 +10,7 @@ export const STEPS = {
   CONSENT:     { id: 1, path: '/consent',         label: 'Informed Consent',    session: 1 },
   REI:         { id: 2, path: '/rei',             label: 'Cognitive Style',     session: 1 },
   CRT:         { id: 3, path: '/crt',             label: 'Cognitive Reflection',session: 1 },
-  STIMULUS:    { id: 4, path: '/stimulus',        label: 'Audio Stimulus',      session: 1 },
+  STIMULUS:    { id: 4, path: '/stimulus',        label: 'Video Stimulus',      session: 1 },
   FREE_RECALL: { id: 5, path: '/free-recall',     label: 'Free Recall',         session: 1 },
   STRUCTURED:  { id: 6, path: '/structured',      label: 'Structured Questions',session: 1 },
   THANK_YOU:   { id: 7, path: '/thank-you',       label: 'Session Complete',    session: 1 },

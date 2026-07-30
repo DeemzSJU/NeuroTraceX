@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-NeuroTraceX is a full-stack web-based experiment platform for a cognitive psychology study investigating how cognitive style influences episodic memory reconstruction. Participants complete a two-session protocol (Session 1 + 48hr delayed Session 2) involving cognitive style measurement (REI-40 & CRT), exposure to an ambiguous audio stimulus, and structured/free recall tasks. AI-powered divergence scoring and personalised interpretation are computed server-side.
+NeuroTraceX is a full-stack web-based experiment platform for a cognitive psychology study investigating how cognitive style influences episodic memory reconstruction. Participants complete a two-session protocol (Session 1 + 48hr delayed Session 2) involving cognitive style measurement (REI-20 & CRT), exposure to an ambiguous audio stimulus, and structured/free recall tasks. AI-powered divergence scoring and personalised interpretation are computed server-side.
 
 ## Tech Stack
 
@@ -13,7 +13,7 @@ NeuroTraceX is a full-stack web-based experiment platform for a cognitive psycho
 | Frontend | React.js, React Router, Axios, Recharts |
 | Backend | Python 3.11+, FastAPI, Uvicorn |
 | Database | PostgreSQL (Supabase-hosted) |
-| AI / ML | sentence-transformers (all-MiniLM-L6-v2), Anthropic Claude API |
+| AI / ML | sentence-transformers (all-MiniLM-L6-v2), Groq API (Free Tier — Llama 3.3 70B) |
 | Email | Resend API |
 | Analysis | Jupyter, pandas, scipy, pingouin, seaborn, matplotlib |
 | Deployment | Vercel (frontend), Render (backend) |

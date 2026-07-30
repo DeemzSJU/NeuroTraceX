@@ -2,18 +2,18 @@
 NeuroTraceX — AI Interpretation Service
 
 Generates a personalized, clinical/research-grade 3-paragraph interpretation
-using the Anthropic Claude API. Falls back to static rule-based generation
-if the API call fails or if insufficient data exists.
+using the free-tier Groq API (e.g. Llama 3.3 70B Versatile).
+Falls back gracefully to a static rule-based generator if the API call fails,
+times out, or if the sample size is below the configured threshold.
 """
 
 import logging
-from anthropic import AsyncAnthropic
+from groq import AsyncGroq
 
 from app.config import get_settings
 from app.services.interpret_static import generate_static_interpretation
 
 logger = logging.getLogger("neurotracex.interpretation")
-settings = get_settings()
 
 
 async def get_ai_interpretation(
@@ -27,13 +27,16 @@ async def get_ai_interpretation(
     total_participants: int,
 ) -> str:
     """
-    Calls the Anthropic Claude API to generate a personalized interpretation.
-    Falls back to static rule-based interpretation on error or if the study
+    Calls the Groq API (Llama-3.3-70b-versatile or custom model) to generate a
+    personalized 3-paragraph feedback report.
+    Falls back to static rule-based interpretation on error, timeout, or if the study
     is below the minimum participant threshold.
     
     Returns:
-        A 3-paragraph markdown interpretation.
+        A 3-paragraph markdown interpretation string.
     """
+    settings = get_settings()
+
     # Force static fallback if we don't have enough participants for comparison
     if total_participants < settings.min_participants_for_ai:
         logger.info(
@@ -45,14 +48,14 @@ async def get_ai_interpretation(
             factual_div, interpretive_div, emotional_div
         )
 
-    if not settings.anthropic_api_key:
-        logger.warning("Anthropic API key is not configured. Using static fallback.")
+    if not settings.groq_api_key:
+        logger.warning("Groq API key is not configured. Using static fallback.")
         return generate_static_interpretation(
             rei_experiential, rei_rational, crt_score,
             factual_div, interpretive_div, emotional_div
         )
 
-    # Construct the prompt for Claude
+    # Construct prompt for the LLM
     prompt = f"""
 Participant Name: {first_name}
 Cognitive Style Scores:
@@ -60,7 +63,7 @@ Cognitive Style Scores:
 - REI Rational (Analytical): {rei_rational:.2f} / 5.0
 - Cognitive Reflection Test (CRT): {crt_score} / 3
 
-Memory Divergence Scores (0 to 1 scale, where 0 is identical to the group mean, and 1 is maximally different):
+Memory Divergence Scores (0 to 1 scale, where 0 is identical to group mean, and 1 is maximally divergent):
 - Factual Divergence: {factual_div:.3f}
 - Interpretive Divergence: {interpretive_div:.3f}
 - Emotional Divergence: {emotional_div:.3f}
@@ -78,33 +81,32 @@ Format the output strictly as 3 paragraphs separated by double newlines. Do not 
 """
 
     try:
-        # Initialize Anthropic Async Client
-        client = AsyncAnthropic(api_key=settings.anthropic_api_key)
-        
-        # Determine appropriate model identifier
-        model = settings.claude_model
-        if model == "claude-sonnet-4-6":
-            # Map to actual API model name
-            model = "claude-3-5-sonnet-20241022"
+        # Initialize Groq Async Client with a 15-second timeout for production reliability
+        client = AsyncGroq(api_key=settings.groq_api_key, timeout=15.0)
 
-        response = await client.messages.create(
-            model=model,
-            max_tokens=1000,
+        response = await client.chat.completions.create(
+            model=settings.groq_model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an expert cognitive psychologist writing personalized feedback "
+                        "for a study on subjective reality, cognitive styles, and memory reconstruction."
+                    ),
+                },
+                {"role": "user", "content": prompt},
+            ],
             temperature=0.7,
-            system=(
-                "You are an expert cognitive psychologist writing personalized feedback "
-                "for a study on subjective reality, cognitive styles, and memory reconstruction."
-            ),
-            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1000,
         )
-        
-        interpretation = response.content[0].text.strip()
+
+        interpretation = response.choices[0].message.content.strip()
         if interpretation:
             return interpretation
 
     except Exception as e:
-        logger.error(f"Error calling Anthropic API: {str(e)}. Falling back to static.")
-        
+        logger.error(f"Error calling Groq API: {str(e)}. Falling back to static interpretation.")
+
     # Fallback to static rule-based generator on any failure
     return generate_static_interpretation(
         rei_experiential, rei_rational, crt_score,

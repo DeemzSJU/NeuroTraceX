@@ -21,7 +21,7 @@ def is_free_recall_invalid(text: str, min_words: int = 50) -> bool:
 
 def has_straightlining_rei(answers: List[int], max_consecutive: int = 5) -> bool:
     """
-    Checks for random/pattern clicking on the REI-40.
+    Checks for random/pattern clicking on the REI-20.
     Rule: Identical answers to 5 or more consecutive REI items.
     """
     if len(answers) < max_consecutive:

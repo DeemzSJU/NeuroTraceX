@@ -29,7 +29,7 @@ function LandingPage() {
           <div style={{ textAlign: 'left', color: 'var(--color-text-secondary)' }}>
             <p style={{ marginBottom: '0.75rem' }}>
               <strong style={{ color: 'var(--color-text-primary)' }}>Session 1</strong> (~22 minutes):
-              A brief questionnaire, an audio experience, and memory questions.
+              A brief questionnaire, a video experience, and memory questions.
             </p>
             <p style={{ marginBottom: '0.75rem' }}>
               <strong style={{ color: 'var(--color-text-primary)' }}>Session 2</strong> (~10 minutes):

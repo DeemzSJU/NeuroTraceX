@@ -5,7 +5,7 @@ NeuroTraceX — Tests for Participant API Routes
 import pytest
 import uuid
 from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 from app.main import app
 from app.dependencies import get_db
@@ -50,7 +50,7 @@ def test_participant_lookup_success(client, mock_db):
     )
     
     # Mock query result
-    mock_result = AsyncMock()
+    mock_result = MagicMock()
     mock_result.scalar_one_or_none.return_value = mock_participant
     mock_db.execute.return_value = mock_result
     
@@ -67,7 +67,7 @@ def test_participant_lookup_not_found(client, mock_db):
     session_id = uuid.uuid4()
     
     # Mock query result to return None
-    mock_result = AsyncMock()
+    mock_result = MagicMock()
     mock_result.scalar_one_or_none.return_value = None
     mock_db.execute.return_value = mock_result
     

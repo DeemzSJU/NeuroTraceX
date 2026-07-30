@@ -155,7 +155,11 @@ async def compute_participant_divergence(
     for resp in participant_responses:
         if resp.question_type == QuestionType.REI or resp.question_type == QuestionType.CRT:
             continue
-        if resp.question_type == QuestionType.AUDIO_EVENT or resp.question_type == QuestionType.FREE_RECALL:
+        if (
+            resp.question_type == QuestionType.AUDIO_EVENT
+            or resp.question_type == QuestionType.VIDEO_EVENT
+            or resp.question_type == QuestionType.FREE_RECALL
+        ):
             continue
 
         q_id = resp.question_id

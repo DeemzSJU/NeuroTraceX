@@ -7,7 +7,7 @@ reminders only and is kept separate in analysis.
 """
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -75,6 +75,12 @@ class Participant(Base):
             self.id = uuid.uuid4()
         if not self.session_id:
             self.session_id = uuid.uuid4()
+        if self.session2_completed is None:
+            self.session2_completed = False
+        if not self.consent_timestamp:
+            self.consent_timestamp = datetime.now(timezone.utc)
+        if not self.created_at:
+            self.created_at = datetime.now(timezone.utc)
 
     def __repr__(self) -> str:
         return f"<Participant session_id={self.session_id}>"

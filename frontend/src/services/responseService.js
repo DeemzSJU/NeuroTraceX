@@ -5,7 +5,7 @@
 import api from './api';
 
 const responseService = {
-  /** Submit all 40 REI-40 answers */
+  /** Submit all 20 REI-20 answers */
   submitREI: (sessionId, answers) =>
     api.post('/responses/rei', { session_id: sessionId, answers }),
 
@@ -32,9 +32,17 @@ const responseService = {
       session_number: sessionNumber,
     }),
 
+  /** Log video playback event (start/end) */
+  submitVideoEvent: (sessionId, eventType, timestamp) =>
+    api.post('/responses/video-event', {
+      session_id: sessionId,
+      event_type: eventType,
+      timestamp: timestamp.toISOString(),
+    }),
+
   /** Log audio playback event (start/end) */
   submitAudioEvent: (sessionId, eventType, timestamp) =>
-    api.post('/responses/audio-event', {
+    api.post('/responses/video-event', {
       session_id: sessionId,
       event_type: eventType,
       timestamp: timestamp.toISOString(),

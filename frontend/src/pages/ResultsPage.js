@@ -6,6 +6,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import scoreService from '../services/scoreService';
+import Loader from '../components/common/Loader';
+import ScoreCard from '../components/results/ScoreCard';
+import DivergenceChart from '../components/results/DivergenceChart';
+import InterpretationCard from '../components/results/InterpretationCard';
 
 function ResultsPage() {
   const { sessionId } = useParams();
@@ -30,9 +34,7 @@ function ResultsPage() {
   if (loading) {
     return (
       <div className="page">
-        <div className="text-center mt-8">
-          <p style={{ color: 'var(--color-text-secondary)' }}>Loading your results...</p>
-        </div>
+        <Loader text="Analyzing your cognitive style & memory divergence..." size="lg" />
       </div>
     );
   }
@@ -55,6 +57,8 @@ function ResultsPage() {
     );
   }
 
+  const scores = results?.scores || {};
+
   return (
     <div className="page animate-fade-in">
       <div className="page__header">
@@ -66,64 +70,45 @@ function ResultsPage() {
       </div>
 
       <div className="page__content">
-        {/* Cognitive Style Scores */}
-        <div className="card mb-6">
-          <h3 style={{ marginBottom: '1rem' }}>Cognitive Style</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div>
-              <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Experiential</p>
-              <p style={{ fontSize: 'var(--text-2xl)', fontWeight: 700, color: 'var(--color-primary-400)' }}>
-                {results?.scores?.rei_experiential?.toFixed(2) ?? '—'}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Rational</p>
-              <p style={{ fontSize: 'var(--text-2xl)', fontWeight: 700, color: 'var(--color-accent-400)' }}>
-                {results?.scores?.rei_rational?.toFixed(2) ?? '—'}
-              </p>
-            </div>
-          </div>
+        {/* Cognitive Style Summary Cards */}
+        <h3 className="mb-4" style={{ fontSize: 'var(--text-lg)' }}>Cognitive Style (REI-20)</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+          <ScoreCard
+            title="Experiential (Intuitive)"
+            value={scores.rei_experiential}
+            subtitle="Scale 1.0 to 5.0"
+            color="var(--color-primary-400)"
+          />
+          <ScoreCard
+            title="Rational (Analytical)"
+            value={scores.rei_rational}
+            subtitle="Scale 1.0 to 5.0"
+            color="var(--color-accent-400)"
+          />
+          <ScoreCard
+            title="Cognitive Reflection (CRT)"
+            value={scores.crt_score !== null && scores.crt_score !== undefined ? `${scores.crt_score} / 3` : '—'}
+            subtitle="Analytical Suppression"
+            color="var(--color-text-success)"
+          />
         </div>
 
-        {/* Divergence Scores */}
-        <div className="card mb-6">
-          <h3 style={{ marginBottom: '1rem' }}>Memory Divergence</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
-            <div>
-              <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Factual</p>
-              <p style={{ fontSize: 'var(--text-xl)', fontWeight: 600 }}>
-                {results?.scores?.factual_divergence?.toFixed(3) ?? '—'}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Interpretive</p>
-              <p style={{ fontSize: 'var(--text-xl)', fontWeight: 600 }}>
-                {results?.scores?.interpretive_divergence?.toFixed(3) ?? '—'}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Emotional</p>
-              <p style={{ fontSize: 'var(--text-xl)', fontWeight: 600 }}>
-                {results?.scores?.emotional_divergence?.toFixed(3) ?? '—'}
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Divergence Chart */}
+        <DivergenceChart
+          factual={scores.factual_divergence || 0}
+          interpretive={scores.interpretive_divergence || 0}
+          emotional={scores.emotional_divergence || 0}
+        />
 
         {/* AI Interpretation */}
-        {results?.scores?.ai_interpretation_text && (
-          <div className="card mb-6">
-            <h3 style={{ marginBottom: '1rem' }}>Your Personalised Interpretation</h3>
-            <div style={{ color: 'var(--color-text-secondary)', lineHeight: '1.8', whiteSpace: 'pre-wrap' }}>
-              {results.scores.ai_interpretation_text}
-            </div>
-          </div>
+        {scores.ai_interpretation_text && (
+          <InterpretationCard text={scores.ai_interpretation_text} />
         )}
 
         {/* Participant count context */}
-        <div className="card text-center" style={{ background: 'var(--color-bg-tertiary)' }}>
+        <div className="card text-center" style={{ background: 'var(--color-bg-tertiary)', padding: '1rem' }}>
           <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
-            Based on data from {results?.total_participants ?? 0} participants.
+            Based on data from {results?.total_participants ?? 0} study participants.
           </p>
         </div>
       </div>

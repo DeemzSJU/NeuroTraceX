@@ -32,7 +32,7 @@ function ThankYouPage() {
               a unique link to complete Session 2 (~10 minutes).
             </p>
             <p style={{ marginBottom: '0.75rem' }}>
-              🔒 Please <strong style={{ color: 'var(--color-text-warning)' }}>do not discuss</strong> the audio
+              🔒 Please <strong style={{ color: 'var(--color-text-warning)' }}>do not discuss</strong> the video
               recording or this study with anyone until you receive your final results.
             </p>
             <p>

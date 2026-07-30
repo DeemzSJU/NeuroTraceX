@@ -10,6 +10,9 @@ import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
 import responseService from '../services/responseService';
 
+import QuestionCard from '../components/questionnaire/QuestionCard';
+import { CRT_QUESTIONS } from '../constants/crtQuestions';
+
 function CRTPage() {
   const navigate = useNavigate();
   const { sessionId, setCRTScore, setStep, setLoading, isLoading } = useSessionContext();
@@ -50,9 +53,18 @@ function CRTPage() {
       </div>
 
       <div className="page__content">
-        <p className="text-sm mb-6" style={{ color: 'var(--color-text-tertiary)', textAlign: 'center' }}>
-          CRT items will be loaded here once provided.
-        </p>
+        <div>
+          {CRT_QUESTIONS.map((item, idx) => (
+            <QuestionCard
+              key={item.id}
+              number={idx + 1}
+              text={item.text}
+              type="number"
+              value={answers[idx]}
+              onChange={(val) => handleAnswer(idx, val)}
+            />
+          ))}
+        </div>
 
         {error && (
           <p className="text-error text-sm mb-4 text-center">{error}</p>
@@ -62,9 +74,9 @@ function CRTPage() {
           className={`btn btn--primary btn--large ${isLoading ? 'btn--loading' : ''}`}
           onClick={handleSubmit}
           disabled={!allAnswered}
-          style={{ width: '100%' }}
+          style={{ width: '100%', marginTop: '1rem' }}
         >
-          Continue →
+          Continue to Audio Stimulus →
         </button>
       </div>
     </div>

@@ -5,15 +5,20 @@ Loads environment variables from .env and provides typed,
 validated settings via Pydantic BaseSettings.
 """
 
+import os
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Resolve absolute path to .env in the root folder relative to this file
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+ENV_FILE_PATH = os.path.abspath(os.path.join(_current_dir, "..", "..", ".env"))
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = SettingsConfigDict(
-        env_file="../../.env",
+        env_file=ENV_FILE_PATH,
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
@@ -39,8 +44,9 @@ class Settings(BaseSettings):
         """Parse comma-separated CORS origins into a list."""
         return [origin.strip() for origin in self.cors_origins.split(",")]
 
-    # --- Anthropic Claude API ---
-    anthropic_api_key: str = ""
+    # --- Groq AI API (Free Tier) ---
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.3-70b-versatile"
 
     # --- Resend Email API ---
     resend_api_key: str = ""
@@ -48,7 +54,6 @@ class Settings(BaseSettings):
 
     # --- AI Interpretation ---
     min_participants_for_ai: int = 20
-    claude_model: str = "claude-sonnet-4-6"
 
 
 @lru_cache

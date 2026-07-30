@@ -1,8 +1,7 @@
 /**
- * NeuroTraceX — REI-40 Questionnaire Page (Step 2a)
- * Displays all 40 REI items on a single scrollable page.
+ * NeuroTraceX — REI-20 Questionnaire Page (Step 2a)
+ * Displays all 20 REI items on a single scrollable page.
  * All items must be answered before proceeding.
- * Questionnaire content will be provided by the researcher.
  */
 
 import React, { useState } from 'react';
@@ -11,12 +10,14 @@ import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
 import responseService from '../services/responseService';
 
+import QuestionCard from '../components/questionnaire/QuestionCard';
+import { REI_QUESTIONS } from '../constants/reiQuestions';
+
 function REIPage() {
   const navigate = useNavigate();
   const { sessionId, setREIScores, setStep, setLoading, isLoading } = useSessionContext();
 
-  // Placeholder: 40 empty answers (will use real questions from reiQuestions.js)
-  const [answers, setAnswers] = useState(new Array(40).fill(0));
+  const [answers, setAnswers] = useState(new Array(REI_QUESTIONS.length).fill(0));
   const [error, setError] = useState(null);
 
   const allAnswered = answers.every((a) => a >= 1 && a <= 5);
@@ -55,20 +56,29 @@ function REIPage() {
         <p>
           Rate how well each statement describes you on a scale of 1 to 5.
           <br />
-          <span className="text-accent">{answeredCount}/40</span> answered
+          <span className="text-accent">{answeredCount}/{REI_QUESTIONS.length}</span> answered
         </p>
       </div>
 
       <div className="page__content">
-        <div className="card mb-6">
-          <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
-            1 = Definitely not true of myself &nbsp;→&nbsp; 5 = Definitely true of myself
+        <div className="card mb-6" style={{ position: 'sticky', top: '70px', zIndex: 90, backdropFilter: 'blur(8px)', background: 'rgba(22, 22, 31, 0.95)' }}>
+          <p className="text-sm" style={{ color: 'var(--color-text-tertiary)', textAlign: 'center' }}>
+            1 = Definitely Not True &nbsp;|&nbsp; 3 = Neutral &nbsp;|&nbsp; 5 = Definitely True
           </p>
         </div>
 
-        <p className="text-sm mb-6" style={{ color: 'var(--color-text-tertiary)', textAlign: 'center' }}>
-          Questionnaire items will be loaded here once provided.
-        </p>
+        <div>
+          {REI_QUESTIONS.map((item, idx) => (
+            <QuestionCard
+              key={item.id}
+              number={idx + 1}
+              text={item.text}
+              type="likert"
+              value={answers[idx]}
+              onChange={(val) => handleAnswer(idx, val)}
+            />
+          ))}
+        </div>
 
         {error && (
           <p className="text-error text-sm mb-4 text-center">{error}</p>
@@ -78,9 +88,9 @@ function REIPage() {
           className={`btn btn--primary btn--large ${isLoading ? 'btn--loading' : ''}`}
           onClick={handleSubmit}
           disabled={!allAnswered}
-          style={{ width: '100%' }}
+          style={{ width: '100%', marginTop: '1.5rem' }}
         >
-          Submit REI-40 →
+          {allAnswered ? 'Submit REI-20 →' : `Answer All Questions (${REI_QUESTIONS.length - answeredCount} remaining)`}
         </button>
       </div>
     </div>

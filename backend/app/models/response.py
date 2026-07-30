@@ -1,7 +1,7 @@
 """
 NeuroTraceX — Response Model
 
-Stores every participant response: REI-40 items, CRT answers,
+Stores every participant response: REI-20 items, CRT answers,
 free recall text, structured question answers, and audio events.
 Each response is tagged with question type, session number (1 or 2),
 and response time in milliseconds.
@@ -27,6 +27,7 @@ class QuestionType(str, enum.Enum):
     INTERPRETIVE = "interpretive"
     EMOTIONAL = "emotional"
     AUDIO_EVENT = "audio_event"
+    VIDEO_EVENT = "video_event"
 
 
 class Response(Base):

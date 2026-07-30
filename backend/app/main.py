@@ -24,11 +24,11 @@ async def lifespan(app: FastAPI):
     """Startup and shutdown events."""
     # ── Startup ──
     settings = get_settings()
-    print(f"🧠 NeuroTraceX starting in {settings.environment} mode")
-    print(f"📡 CORS origins: {settings.cors_origin_list}")
+    print(f"[NeuroTraceX] starting in {settings.environment} mode")
+    print(f"[NeuroTraceX] CORS origins: {settings.cors_origin_list}")
     yield
     # ── Shutdown ──
-    print("🧠 NeuroTraceX shutting down")
+    print("[NeuroTraceX] shutting down")
 
 
 def create_app() -> FastAPI:

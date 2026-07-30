@@ -58,7 +58,7 @@ function ConsentPage() {
               • All data is collected anonymously — no identifying information is stored with your responses.<br />
               • Your email is used solely to send your Session 2 link and is stored separately from your data.<br />
               • You may withdraw at any point without consequence.<br />
-              • The study involves listening to a short audio recording and answering questions about it.<br />
+              • The study involves watching a short video recording and answering questions about it.<br />
               • There is no risk of psychological harm.
             </p>
           </div>
