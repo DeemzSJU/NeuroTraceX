@@ -42,3 +42,6 @@ analysis/data/raw/*
 analysis/data/processed/*
 !analysis/data/raw/.gitkeep
 !analysis/data/processed/.gitkeep
+
+# Video assets
+stimuli/video/*.mp4
