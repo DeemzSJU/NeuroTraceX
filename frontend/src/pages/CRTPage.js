@@ -76,7 +76,7 @@ function CRTPage() {
           disabled={!allAnswered}
           style={{ width: '100%', marginTop: '1rem' }}
         >
-          Continue to Audio Stimulus →
+          Continue to Video Stimulus →
         </button>
       </div>
     </div>

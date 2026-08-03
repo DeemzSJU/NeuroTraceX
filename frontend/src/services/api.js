@@ -20,7 +20,7 @@ const api = axios.create({
 // ── Request Interceptor ──────────────────────────────────────────
 api.interceptors.request.use(
   (config) => {
-    // Could add auth token here if needed in the future
+    console.log("[Axios Request]", config.method.toUpperCase(), config.url, config.data);
     return config;
   },
   (error) => Promise.reject(error)
@@ -28,8 +28,12 @@ api.interceptors.request.use(
 
 // ── Response Interceptor ─────────────────────────────────────────
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    console.log("[Axios Response]", response.status, response.data);
+    return response.data;
+  },
   (error) => {
+    console.error("[Axios Error]", error.response?.status, error.response?.data || error.message);
     const message =
       error.response?.data?.detail ||
       error.response?.data?.message ||

@@ -28,7 +28,7 @@ function LandingPage() {
           <h3 style={{ marginBottom: '1rem' }}>What to Expect</h3>
           <div style={{ textAlign: 'left', color: 'var(--color-text-secondary)' }}>
             <p style={{ marginBottom: '0.75rem' }}>
-              <strong style={{ color: 'var(--color-text-primary)' }}>Session 1</strong> (~22 minutes):
+              <strong style={{ color: 'var(--color-text-primary)' }}>Session 1</strong> (~15 minutes):
               A brief questionnaire, a video experience, and memory questions.
             </p>
             <p style={{ marginBottom: '0.75rem' }}>

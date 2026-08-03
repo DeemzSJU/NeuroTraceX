@@ -36,14 +36,32 @@ function REIPage() {
     setError(null);
 
     try {
+      console.log("[REIPage] handleSubmit started");
+      console.log("[REIPage] sessionId:", sessionId);
+      console.log("[REIPage] answers:", answers);
       const response = await responseService.submitREI(sessionId, answers);
+      console.log("[REIPage] response received:", response);
+      
+      console.log("[REIPage] calling setLoading(false)");
+      setLoading(false);
+      
+      console.log("[REIPage] calling setREIScores with", {
+        experiential: response.experiential_score,
+        rational: response.rational_score,
+      });
       setREIScores({
         experiential: response.experiential_score,
         rational: response.rational_score,
       });
+      
+      console.log("[REIPage] calling setStep with", STEPS.CRT.id);
       setStep(STEPS.CRT.id);
+      
+      console.log("[REIPage] calling navigate to", STEPS.CRT.path);
       navigate(STEPS.CRT.path);
+      console.log("[REIPage] navigate called successfully");
     } catch (err) {
+      console.error("[REIPage] handleSubmit error:", err);
       setError(err.message);
       setLoading(false);
     }

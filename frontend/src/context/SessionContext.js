@@ -34,6 +34,7 @@ const ACTIONS = {
 
 // ── Reducer ──────────────────────────────────────────────────────
 function sessionReducer(state, action) {
+  console.log("[SessionContext Reducer] action:", action.type, action.payload);
   switch (action.type) {
     case ACTIONS.SET_SESSION:
       return { ...state, sessionId: action.payload, error: null };
@@ -79,13 +80,19 @@ export function SessionProvider({ children }) {
 
   // Persist to sessionStorage on every state change
   useEffect(() => {
-    sessionStorage.setItem('neurotracex_session', JSON.stringify({
-      sessionId: state.sessionId,
-      currentStep: state.currentStep,
-      sessionNumber: state.sessionNumber,
-      reiScores: state.reiScores,
-      crtScore: state.crtScore,
-    }));
+    console.log("[SessionContext useEffect] persisting state:", state);
+    try {
+      sessionStorage.setItem('neurotracex_session', JSON.stringify({
+        sessionId: state.sessionId,
+        currentStep: state.currentStep,
+        sessionNumber: state.sessionNumber,
+        reiScores: state.reiScores,
+        crtScore: state.crtScore,
+      }));
+      console.log("[SessionContext useEffect] persisted successfully");
+    } catch (e) {
+      console.error("[SessionContext useEffect] persist failed:", e);
+    }
   }, [state.sessionId, state.currentStep, state.sessionNumber, state.reiScores, state.crtScore]);
 
   // ── Action Creators ──────────────────────────────────────────

@@ -92,7 +92,7 @@ The experiment platform is built as a full-stack web application using the follo
 
 The target sample is 60 participants, recruited with the expectation of retaining a minimum of 40 complete, usable datasets after accounting for dropout and data quality exclusions. Participants are adults (18+) recruited through university networks, social media platforms, and online research participation communities (such as Reddit's r/SampleSize). Participation is entirely voluntary. Participants are informed of the study's general purpose (memory and thinking styles), the time commitment, and their right to withdraw at any point without consequence. Informed consent is obtained digitally at the start of Session 1 before any study material is shown.
 
-## Session 1 (\~22 Minutes)
+## Session 1 (\~15 Minutes)
 
 ### Step 1 — Informed Consent
 
