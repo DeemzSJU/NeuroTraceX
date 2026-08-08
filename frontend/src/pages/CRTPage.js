@@ -1,7 +1,6 @@
 /**
  * NeuroTraceX — CRT Page (Step 2b)
  * Cognitive Reflection Test — 3 items.
- * Content will be provided by the researcher.
  */
 
 import React, { useState } from 'react';
@@ -38,6 +37,7 @@ function CRTPage() {
       const response = await responseService.submitCRT(sessionId, answers);
       setCRTScore(response.crt_score);
       setStep(STEPS.STIMULUS.id);
+      setLoading(false);
       navigate(STEPS.STIMULUS.path);
     } catch (err) {
       setError(err.message);
@@ -53,7 +53,11 @@ function CRTPage() {
       </div>
 
       <div className="page__content">
-        <div>
+        <div className="card--glass" style={{
+          padding: '0.5rem 1.5rem',
+          borderRadius: 'var(--radius-xl)',
+          marginBottom: '1.5rem',
+        }}>
           {CRT_QUESTIONS.map((item, idx) => (
             <QuestionCard
               key={item.id}
@@ -62,21 +66,22 @@ function CRTPage() {
               type="number"
               value={answers[idx]}
               onChange={(val) => handleAnswer(idx, val)}
+              isLast={idx === CRT_QUESTIONS.length - 1}
             />
           ))}
         </div>
 
         {error && (
-          <p className="text-error text-sm mb-4 text-center">{error}</p>
+          <p style={{ color: 'var(--color-error)', fontSize: 'var(--text-xs)', marginTop: '1rem', textAlign: 'center' }}>{error}</p>
         )}
 
         <button
-          className={`btn btn--primary btn--large ${isLoading ? 'btn--loading' : ''}`}
+          className={`btn btn--gold-shimmer btn--large ${isLoading ? 'btn--loading' : ''}`}
           onClick={handleSubmit}
           disabled={!allAnswered}
-          style={{ width: '100%', marginTop: '1rem' }}
+          style={{ width: '100%', marginTop: '2rem' }}
         >
-          Continue to Video Stimulus →
+          Continue to video
         </button>
       </div>
     </div>

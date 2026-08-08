@@ -33,8 +33,8 @@ function ResultsPage() {
 
   if (loading) {
     return (
-      <div className="page">
-        <Loader text="Analyzing your cognitive style & memory divergence..." size="lg" />
+      <div className="page" style={{ justifyContent: 'center', minHeight: '60vh' }}>
+        <Loader text="Analysing your cognitive profile..." size="lg" />
       </div>
     );
   }
@@ -46,9 +46,9 @@ function ResultsPage() {
           <h1>Results</h1>
         </div>
         <div className="page__content">
-          <div className="card text-center">
-            <p className="text-error">{error}</p>
-            <p className="text-sm mt-4" style={{ color: 'var(--color-text-tertiary)' }}>
+          <div className="card" style={{ textAlign: 'center' }}>
+            <p style={{ color: 'var(--color-error)', fontSize: 'var(--text-sm)' }}>{error}</p>
+            <p style={{ color: 'var(--color-text-disabled)', fontSize: 'var(--text-xs)', marginTop: '0.75rem' }}>
               Results may not be available yet. Please check back after completing Session 2.
             </p>
           </div>
@@ -69,28 +69,40 @@ function ResultsPage() {
         </p>
       </div>
 
-      <div className="page__content">
-        {/* Cognitive Style Summary Cards */}
-        <h3 className="mb-4" style={{ fontSize: 'var(--text-lg)' }}>Cognitive Style (REI-20)</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-          <ScoreCard
-            title="Experiential (Intuitive)"
-            value={scores.rei_experiential}
-            subtitle="Scale 1.0 to 5.0"
-            color="var(--color-primary-400)"
-          />
-          <ScoreCard
-            title="Rational (Analytical)"
-            value={scores.rei_rational}
-            subtitle="Scale 1.0 to 5.0"
-            color="var(--color-accent-400)"
-          />
-          <ScoreCard
-            title="Cognitive Reflection (CRT)"
-            value={scores.crt_score !== null && scores.crt_score !== undefined ? `${scores.crt_score} / 3` : '—'}
-            subtitle="Analytical Suppression"
-            color="var(--color-text-success)"
-          />
+      <div className="page__content stagger-children">
+        {/* Cognitive Style Scores */}
+        <div>
+          <h4 style={{
+            fontSize: 'var(--text-xs)', fontWeight: 500,
+            color: 'var(--color-text-disabled)', textTransform: 'uppercase',
+            letterSpacing: '0.06em', marginBottom: '0.75rem',
+          }}>
+            Cognitive Style (REI-20)
+          </h4>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '0.75rem', marginBottom: '1.5rem',
+          }}>
+            <ScoreCard
+              title="Experiential"
+              value={scores.rei_experiential}
+              subtitle="Scale 1.0 to 5.0"
+              color="var(--color-accent)"
+            />
+            <ScoreCard
+              title="Rational"
+              value={scores.rei_rational}
+              subtitle="Scale 1.0 to 5.0"
+              color="var(--color-primary)"
+            />
+            <ScoreCard
+              title="CRT Score"
+              value={scores.crt_score !== null && scores.crt_score !== undefined ? `${scores.crt_score} / 3` : '—'}
+              subtitle="Analytical Suppression"
+              color="var(--color-success)"
+            />
+          </div>
         </div>
 
         {/* Divergence Chart */}
@@ -105,9 +117,13 @@ function ResultsPage() {
           <InterpretationCard text={scores.ai_interpretation_text} />
         )}
 
-        {/* Participant count context */}
-        <div className="card text-center" style={{ background: 'var(--color-bg-tertiary)', padding: '1rem' }}>
-          <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+        {/* Footer context */}
+        <div style={{
+          textAlign: 'center', padding: '1rem 0',
+          borderTop: '1px solid var(--color-border-subtle)',
+          marginTop: '0.5rem',
+        }}>
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-disabled)', margin: 0 }}>
             Based on data from {results?.total_participants ?? 0} study participants.
           </p>
         </div>

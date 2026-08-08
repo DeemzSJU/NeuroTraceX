@@ -3,7 +3,7 @@ import LikertScale from './LikertScale';
 
 /**
  * QuestionCard Component
- * Displays a single questionnaire item with prompt text and response input.
+ * Clean row layout with subtle bottom border separator.
  *
  * @param {Object} props
  * @param {number | string} props.number - question number or label
@@ -12,23 +12,28 @@ import LikertScale from './LikertScale';
  * @param {any} props.value - current value
  * @param {Function} props.onChange - value change handler
  */
-export function QuestionCard({ number, text, type = 'likert', value, onChange }) {
+export function QuestionCard({ number, text, type = 'likert', value, onChange, isLast = false }) {
   return (
-    <div className="card mb-4" style={{ padding: '1.25rem 1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-        <span
-          style={{
-            fontWeight: 700,
-            fontSize: 'var(--text-sm)',
-            color: 'var(--color-primary-400)',
-            minWidth: '1.75rem',
-            paddingTop: '0.1rem',
-          }}
-        >
-          {number}.
+    <div style={{
+      padding: '1.125rem 0',
+      borderBottom: isLast ? 'none' : '1px solid var(--color-border-subtle)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.875rem' }}>
+        <span style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: 'var(--text-xs)',
+          color: 'var(--color-text-disabled)',
+          minWidth: '1.5rem',
+          paddingTop: '0.15rem',
+          textAlign: 'right',
+        }}>
+          {String(number).padStart(2, '0')}
         </span>
         <div style={{ flex: 1 }}>
-          <p style={{ color: 'var(--color-text-primary)', fontWeight: 500, fontSize: 'var(--text-base)' }}>
+          <p style={{
+            color: 'var(--color-text-primary)', fontWeight: 450,
+            fontSize: 'var(--text-base)', lineHeight: 1.55, margin: 0,
+          }}>
             {text}
           </p>
 
@@ -45,7 +50,7 @@ export function QuestionCard({ number, text, type = 'likert', value, onChange })
               value={value || ''}
               onChange={(e) => onChange(e.target.value)}
               placeholder="Type your response..."
-              style={{ marginTop: '0.75rem', minHeight: '90px' }}
+              style={{ marginTop: '0.75rem', minHeight: '80px' }}
             />
           )}
 
@@ -53,9 +58,18 @@ export function QuestionCard({ number, text, type = 'likert', value, onChange })
             <input
               type="text"
               value={value || ''}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="Enter numerical answer..."
-              style={{ marginTop: '0.75rem', maxWidth: '200px' }}
+              onChange={(e) => {
+                const val = e.target.value;
+                // Keep only numbers and a single decimal point
+                let cleaned = val.replace(/[^0-9.]/g, '');
+                const parts = cleaned.split('.');
+                if (parts.length > 2) {
+                  cleaned = parts[0] + '.' + parts.slice(1).join('');
+                }
+                onChange(cleaned);
+              }}
+              placeholder="Your answer..."
+              style={{ marginTop: '0.75rem', maxWidth: '180px' }}
             />
           )}
         </div>

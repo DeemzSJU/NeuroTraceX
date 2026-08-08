@@ -2,12 +2,14 @@
 NeuroTraceX — API Routes Package
 """
 
+from app.api.routes.auth import router as auth_router
 from app.api.routes.participants import router as participants_router
 from app.api.routes.responses import router as responses_router
 from app.api.routes.scores import router as scores_router
 from app.api.routes.admin import router as admin_router
 
 __all__ = [
+    "auth_router",
     "participants_router",
     "responses_router",
     "scores_router",

@@ -11,6 +11,8 @@ import { STEPS } from '../constants/experimentFlow';
 import { STRUCTURED_QUESTIONS } from '../constants/structuredQuestions';
 import responseService from '../services/responseService';
 import scoreService from '../services/scoreService';
+import participantService from '../services/participantService';
+
 
 function StructuredQuestionsPage() {
   const navigate = useNavigate();
@@ -49,6 +51,11 @@ function StructuredQuestionsPage() {
       } else {
         // All questions done
         if (sessionNumber === 1) {
+          try {
+            await participantService.completeSession1(sessionId);
+          } catch (e) {
+            console.error('Failed to mark Session 1 complete:', e);
+          }
           setStep(STEPS.THANK_YOU.id);
           navigate(STEPS.THANK_YOU.path);
         } else {
@@ -69,9 +76,9 @@ function StructuredQuestionsPage() {
   };
 
   const getCategoryColor = (cat) => {
-    if (cat === 'factual') return 'var(--color-primary-400)';
-    if (cat === 'interpretive') return 'var(--color-accent-400)';
-    return 'var(--color-text-warning)';
+    if (cat === 'factual') return 'var(--color-success)';
+    if (cat === 'interpretive') return 'var(--color-accent)';
+    return 'var(--color-warning)';
   };
 
   return (
@@ -79,33 +86,50 @@ function StructuredQuestionsPage() {
       <div className="page__header">
         <h1>Memory Questions</h1>
         <p>
-          Question <span className="text-accent">{currentQ + 1}</span> of {totalQuestions}
+          Question <span style={{ color: 'var(--color-text-primary)', fontWeight: 600 }}>{currentQ + 1}</span> of {totalQuestions}
         </p>
       </div>
 
       <div className="page__content">
-        <div className="card mb-6">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <span style={{ color: 'var(--color-text-tertiary)', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
-              Question {currentQ + 1}
+        {/* Progress bar */}
+        <div style={{
+          width: '100%', height: '2px',
+          background: 'var(--color-bg-elevated)',
+          borderRadius: 'var(--radius-full)',
+          marginBottom: '2rem', overflow: 'hidden',
+        }}>
+          <div style={{
+            height: '100%',
+            width: `${((currentQ + 1) / totalQuestions) * 100}%`,
+            background: 'var(--color-accent)',
+            transition: 'width 0.4s ease',
+          }} />
+        </div>
+
+        {/* Question card */}
+        <div className="card" style={{ marginBottom: '1.5rem' }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between',
+            alignItems: 'center', marginBottom: '0.75rem',
+          }}>
+            <span style={{
+              fontSize: 'var(--text-xs)', color: 'var(--color-text-disabled)',
+              fontFamily: 'var(--font-mono)',
+            }}>
+              Q{String(currentQ + 1).padStart(2, '0')}
             </span>
-            <span
-              style={{
-                fontSize: '0.75rem',
-                textTransform: 'uppercase',
-                fontWeight: 700,
-                letterSpacing: '0.05em',
-                padding: '0.2rem 0.6rem',
-                borderRadius: 'var(--radius-full)',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: getCategoryColor(question.category),
-                border: `1px solid ${getCategoryColor(question.category)}`,
-              }}
-            >
+            <span style={{
+              fontSize: 'var(--text-xs)', fontWeight: 500,
+              letterSpacing: '0.04em', textTransform: 'uppercase',
+              color: getCategoryColor(question.category),
+            }}>
               {question.category}
             </span>
           </div>
-          <p style={{ fontSize: 'var(--text-lg)', color: 'var(--color-text-primary)', fontWeight: 500 }}>
+          <p style={{
+            fontSize: 'var(--text-lg)', color: 'var(--color-text-primary)',
+            fontWeight: 500, lineHeight: 1.5, margin: 0,
+          }}>
             {question.text}
           </p>
         </div>
@@ -113,8 +137,8 @@ function StructuredQuestionsPage() {
         <textarea
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
-          placeholder="Type your answer here..."
-          style={{ minHeight: '150px', marginBottom: '1.5rem' }}
+          placeholder="Type your answer..."
+          style={{ minHeight: '140px', marginBottom: '1.5rem', fontSize: 'var(--text-base)' }}
           autoFocus
           key={currentQ}
         />
@@ -125,7 +149,7 @@ function StructuredQuestionsPage() {
           disabled={!answer.trim() || submitting}
           style={{ width: '100%' }}
         >
-          {currentQ + 1 < totalQuestions ? 'Next Question →' : 'Finish →'}
+          {currentQ + 1 < totalQuestions ? 'Next question' : 'Finish'}
         </button>
       </div>
     </div>

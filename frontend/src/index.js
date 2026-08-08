@@ -8,15 +8,18 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import { SessionProvider } from './context/SessionContext';
+import { AuthProvider } from './context/AuthContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <SessionProvider>
-        <App />
-      </SessionProvider>
+      <AuthProvider>
+        <SessionProvider>
+          <App />
+        </SessionProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

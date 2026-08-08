@@ -41,10 +41,8 @@ function Session2Page() {
 
   if (loading) {
     return (
-      <div className="page">
-        <div className="text-center mt-8">
-          <p className="text-secondary">Validating your session...</p>
-        </div>
+      <div className="page" style={{ justifyContent: 'center', minHeight: '60vh' }}>
+        <p style={{ color: 'var(--color-text-tertiary)', fontSize: 'var(--text-sm)' }}>Validating your session...</p>
       </div>
     );
   }
@@ -56,8 +54,8 @@ function Session2Page() {
           <h1>Session Not Found</h1>
         </div>
         <div className="page__content">
-          <div className="card text-center">
-            <p className="text-error">{error}</p>
+          <div className="card" style={{ textAlign: 'center' }}>
+            <p style={{ color: 'var(--color-error)', fontSize: 'var(--text-sm)' }}>{error}</p>
           </div>
         </div>
       </div>
@@ -65,16 +63,26 @@ function Session2Page() {
   }
 
   return (
-    <div className="page animate-fade-in">
-      <div className="page__header">
-        <h1>Welcome Back{participant?.first_name ? `, ${participant.first_name}` : ''}!</h1>
-        <p>Session 2 — Delayed Recall</p>
-      </div>
+    <div className="page animate-fade-in" style={{ justifyContent: 'center', minHeight: '70vh' }}>
+      <div style={{ maxWidth: '480px', width: '100%', margin: '0 auto', textAlign: 'center' }}>
+        <h1 style={{ fontSize: 'var(--text-2xl)', marginBottom: '0.5rem' }}>
+          Welcome back{participant?.first_name ? `, ${participant.first_name}` : ''}
+        </h1>
+        <p style={{
+          color: 'var(--color-text-tertiary)', fontSize: 'var(--text-sm)',
+          marginBottom: '2rem',
+        }}>
+          Session 2 — Delayed Recall
+        </p>
 
-      <div className="page__content">
-        <div className="card mb-6">
-          <h3 style={{ marginBottom: '1rem' }}>What to expect</h3>
-          <p style={{ color: 'var(--color-text-secondary)' }}>
+        <div style={{
+          textAlign: 'left', borderLeft: '2px solid var(--color-border)',
+          paddingLeft: '1.25rem', marginBottom: '2.5rem',
+        }}>
+          <p style={{
+            fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)',
+            lineHeight: 1.7, margin: 0,
+          }}>
             You will answer the same 20 questions about the video recording
             you watched 48 hours ago — this time entirely from memory.
             This should take about 10 minutes.
@@ -84,9 +92,9 @@ function Session2Page() {
         <button
           className="btn btn--primary btn--large"
           onClick={handleBegin}
-          style={{ width: '100%' }}
+          style={{ minWidth: '200px' }}
         >
-          Begin Session 2 →
+          Begin Session 2
         </button>
       </div>
     </div>

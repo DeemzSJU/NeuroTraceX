@@ -11,7 +11,7 @@ import {
 
 /**
  * DivergenceChart Component
- * Visualizes Factual, Interpretive, and Emotional divergence scores using Recharts.
+ * Visualizes Factual, Interpretive, and Emotional divergence scores.
  *
  * @param {Object} props
  * @param {number} props.factual - factual divergence (0 to 1)
@@ -20,32 +20,49 @@ import {
  */
 export function DivergenceChart({ factual = 0, interpretive = 0, emotional = 0 }) {
   const data = [
-    { category: 'Factual', score: Number(factual.toFixed(3)), fill: '#818cf8' },
-    { category: 'Interpretive', score: Number(interpretive.toFixed(3)), fill: '#06b6d4' },
-    { category: 'Emotional', score: Number(emotional.toFixed(3)), fill: '#f43f5e' },
+    { category: 'Factual', score: Number(factual.toFixed(3)), fill: '#8b7be8' },
+    { category: 'Interpretive', score: Number(interpretive.toFixed(3)), fill: '#d4a574' },
+    { category: 'Emotional', score: Number(emotional.toFixed(3)), fill: '#e06c75' },
   ];
 
   return (
-    <div className="card mb-6" style={{ padding: '1.5rem' }}>
-      <h3 style={{ fontSize: 'var(--text-lg)', marginBottom: '1rem' }}>
-        Memory Reconstruction Divergence Breakdown
+    <div className="card" style={{ padding: '1.5rem', marginBottom: '1rem' }}>
+      <h3 style={{
+        fontSize: 'var(--text-sm)', fontWeight: 600,
+        color: 'var(--color-text-primary)',
+        marginBottom: '1.25rem',
+      }}>
+        Memory Divergence Breakdown
       </h3>
 
-      <div style={{ width: '100%', height: 220 }}>
+      <div style={{ width: '100%', height: 200 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-            <XAxis dataKey="category" stroke="#94a3b8" fontSize={12} tickLine={false} />
-            <YAxis domain={[0, 1]} stroke="#94a3b8" fontSize={12} tickLine={false} />
+          <BarChart data={data} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
+            <XAxis
+              dataKey="category"
+              stroke="var(--color-text-disabled)"
+              fontSize={11}
+              tickLine={false}
+              axisLine={{ stroke: 'var(--color-border)' }}
+            />
+            <YAxis
+              domain={[0, 1]}
+              stroke="var(--color-text-disabled)"
+              fontSize={11}
+              tickLine={false}
+              axisLine={false}
+            />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#1a1a24',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'var(--color-bg-elevated)',
+                border: '1px solid var(--color-border)',
                 borderRadius: '8px',
-                color: '#f1f5f9',
+                color: 'var(--color-text-primary)',
+                fontSize: '12px',
               }}
-              formatter={(val) => [`${val}`, 'Divergence Score']}
+              formatter={(val) => [`${val}`, 'Divergence']}
             />
-            <Bar dataKey="score" radius={[6, 6, 0, 0]}>
+            <Bar dataKey="score" radius={[4, 4, 0, 0]}>
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
               ))}
@@ -54,8 +71,11 @@ export function DivergenceChart({ factual = 0, interpretive = 0, emotional = 0 }
         </ResponsiveContainer>
       </div>
 
-      <p className="text-xs text-center mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
-        0.00 = identical to consensus | 1.00 = maximal divergence
+      <p style={{
+        fontSize: 'var(--text-xs)', textAlign: 'center',
+        color: 'var(--color-text-disabled)', marginTop: '0.5rem',
+      }}>
+        0.00 = identical to consensus · 1.00 = maximal divergence
       </p>
     </div>
   );

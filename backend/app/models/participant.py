@@ -37,14 +37,27 @@ class Participant(Base):
         String(100),
         nullable=False,
     )
-    email: Mapped[str] = mapped_column(
+    email: Mapped[str | None] = mapped_column(
         String(255),
-        nullable=False,
+        nullable=True,
+    )
+    user_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=True,
+        index=True,
     )
     consent_timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         server_default=func.now(),
+    )
+    session1_completed: Mapped[bool] = mapped_column(
+        default=False,
+        nullable=False,
+    )
+    session1_completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
     )
     session2_completed: Mapped[bool] = mapped_column(
         default=False,
@@ -75,6 +88,8 @@ class Participant(Base):
             self.id = uuid.uuid4()
         if not self.session_id:
             self.session_id = uuid.uuid4()
+        if self.session1_completed is None:
+            self.session1_completed = False
         if self.session2_completed is None:
             self.session2_completed = False
         if not self.consent_timestamp:

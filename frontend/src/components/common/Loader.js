@@ -2,37 +2,40 @@ import React from 'react';
 
 /**
  * Loader Component
+ * Clean pulse-dot loader.
  *
  * @param {Object} props
  * @param {string} [props.text='Loading...']
  * @param {'sm' | 'md' | 'lg'} [props.size='md']
  */
 export function Loader({ text = 'Loading...', size = 'md' }) {
-  const sizePixels = size === 'lg' ? 40 : size === 'sm' ? 20 : 30;
+  const dotSize = size === 'lg' ? 8 : size === 'sm' ? 4 : 6;
+  const gap = size === 'lg' ? 6 : 4;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem',
-        gap: '1rem',
-      }}
-    >
-      <div
-        style={{
-          width: `${sizePixels}px`,
-          height: `${sizePixels}px`,
-          border: '3px solid rgba(99, 102, 241, 0.2)',
-          borderTopColor: 'var(--color-primary-500)',
-          borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite',
-        }}
-      />
+    <div style={{
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      padding: '2rem', gap: '1.25rem',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: `${gap}px` }}>
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            style={{
+              width: `${dotSize}px`, height: `${dotSize}px`,
+              borderRadius: '50%',
+              background: 'var(--color-accent)',
+              animation: `pulse 1.2s ease-in-out ${i * 0.15}s infinite`,
+            }}
+          />
+        ))}
+      </div>
       {text && (
-        <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+        <span style={{
+          fontSize: 'var(--text-xs)', color: 'var(--color-text-disabled)',
+          letterSpacing: '0.01em',
+        }}>
           {text}
         </span>
       )}

@@ -34,27 +34,26 @@ function StimulusPage() {
   return (
     <div className="page animate-fade-in">
       <div className="page__header">
-        <h1>Watch & Listen Carefully</h1>
+        <h1>Watch Carefully</h1>
         <p>
-          You will watch a short video recording. Please pay close attention to the characters,
-          dialogue, actions, and overall scene dynamics. Seeking is disabled.
+          Pay close attention to the characters, dialogue, actions, and overall dynamics. Seeking is disabled.
         </p>
       </div>
 
       <div className="page__content">
         <VideoPlayer
-          src="/video/stimulus.mp4"
+          src="/video/NeuroVideo.mp4"
           onPlay={handlePlay}
           onEnded={handleEnded}
         />
 
         {hasEnded && (
           <button
-            className="btn btn--primary btn--large mt-6"
+            className="btn btn--primary btn--large"
             onClick={handleContinue}
-            style={{ width: '100%' }}
+            style={{ width: '100%', marginTop: '1.5rem' }}
           >
-            Continue to Free Recall →
+            Continue to recall
           </button>
         )}
       </div>

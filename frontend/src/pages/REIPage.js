@@ -36,30 +36,16 @@ function REIPage() {
     setError(null);
 
     try {
-      console.log("[REIPage] handleSubmit started");
-      console.log("[REIPage] sessionId:", sessionId);
-      console.log("[REIPage] answers:", answers);
       const response = await responseService.submitREI(sessionId, answers);
-      console.log("[REIPage] response received:", response);
-      
-      console.log("[REIPage] calling setLoading(false)");
       setLoading(false);
-      
-      console.log("[REIPage] calling setREIScores with", {
-        experiential: response.experiential_score,
-        rational: response.rational_score,
-      });
+
       setREIScores({
         experiential: response.experiential_score,
         rational: response.rational_score,
       });
-      
-      console.log("[REIPage] calling setStep with", STEPS.CRT.id);
+
       setStep(STEPS.CRT.id);
-      
-      console.log("[REIPage] calling navigate to", STEPS.CRT.path);
       navigate(STEPS.CRT.path);
-      console.log("[REIPage] navigate called successfully");
     } catch (err) {
       console.error("[REIPage] handleSubmit error:", err);
       setError(err.message);
@@ -73,19 +59,34 @@ function REIPage() {
         <h1>Cognitive Style Assessment</h1>
         <p>
           Rate how well each statement describes you on a scale of 1 to 5.
-          <br />
-          <span className="text-accent">{answeredCount}/{REI_QUESTIONS.length}</span> answered
         </p>
       </div>
 
       <div className="page__content">
-        <div className="card mb-6" style={{ position: 'sticky', top: '70px', zIndex: 90, backdropFilter: 'blur(8px)', background: 'rgba(22, 22, 31, 0.95)' }}>
-          <p className="text-sm" style={{ color: 'var(--color-text-tertiary)', textAlign: 'center' }}>
-            1 = Definitely Not True &nbsp;|&nbsp; 3 = Neutral &nbsp;|&nbsp; 5 = Definitely True
-          </p>
+        {/* Progress pill */}
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+          background: allAnswered ? 'var(--color-success-subtle)' : 'var(--color-bg-elevated)',
+          border: '1px solid var(--color-border)',
+          borderRadius: 'var(--radius-full)',
+          padding: '0.375rem 0.875rem',
+          marginBottom: '1.5rem',
+          transition: 'all 200ms ease',
+        }}>
+          <span style={{
+            fontSize: 'var(--text-xs)', fontWeight: 500,
+            color: allAnswered ? 'var(--color-success)' : 'var(--color-text-secondary)',
+          }}>
+            {answeredCount} / {REI_QUESTIONS.length} answered
+          </span>
         </div>
 
-        <div>
+        {/* Questions */}
+        <div className="card--glass" style={{
+          padding: '0.5rem 1.5rem',
+          borderRadius: 'var(--radius-xl)',
+          marginBottom: '1.5rem',
+        }}>
           {REI_QUESTIONS.map((item, idx) => (
             <QuestionCard
               key={item.id}
@@ -94,21 +95,22 @@ function REIPage() {
               type="likert"
               value={answers[idx]}
               onChange={(val) => handleAnswer(idx, val)}
+              isLast={idx === REI_QUESTIONS.length - 1}
             />
           ))}
         </div>
 
         {error && (
-          <p className="text-error text-sm mb-4 text-center">{error}</p>
+          <p style={{ color: 'var(--color-error)', fontSize: 'var(--text-xs)', marginTop: '1rem', textAlign: 'center' }}>{error}</p>
         )}
 
         <button
-          className={`btn btn--primary btn--large ${isLoading ? 'btn--loading' : ''}`}
+          className={`btn btn--gold-shimmer btn--large ${isLoading ? 'btn--loading' : ''}`}
           onClick={handleSubmit}
           disabled={!allAnswered}
-          style={{ width: '100%', marginTop: '1.5rem' }}
+          style={{ width: '100%', marginTop: '2rem' }}
         >
-          {allAnswered ? 'Submit REI-20 →' : `Answer All Questions (${REI_QUESTIONS.length - answeredCount} remaining)`}
+          {allAnswered ? 'Continue' : `${REI_QUESTIONS.length - answeredCount} remaining`}
         </button>
       </div>
     </div>

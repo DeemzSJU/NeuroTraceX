@@ -5,14 +5,15 @@
  * renders the app header and progress bar.
  */
 
-import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 import { useSessionContext } from './context/SessionContext';
+import { useAuth } from './context/AuthContext';
+import participantService from './services/participantService';
 import { STEPS, SESSION1_TOTAL_STEPS } from './constants/experimentFlow';
-
-// Pages
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
 import ConsentPage from './pages/ConsentPage';
 import REIPage from './pages/REIPage';
 import CRTPage from './pages/CRTPage';
@@ -24,16 +25,63 @@ import Session2Page from './pages/Session2Page';
 import ResultsPage from './pages/ResultsPage';
 
 function App() {
-  const { currentStep } = useSessionContext();
+  const navigate = useNavigate();
   const location = useLocation();
+  const { user, loading: authLoading } = useAuth();
+  const { sessionId, setSession, setStep, currentStep } = useSessionContext();
+  useEffect(() => {
+    async function restoreProgress() {
+      if (user?.id) {
+        try {
+          const progress = await participantService.getProgress(user.id);
+          if (progress.has_consented && progress.session_id) {
+            setSession(progress.session_id);
 
-  // Determine if we should show the progress bar (Session 1 only)
+            const stepKey = progress.current_step.toUpperCase();
+            if (STEPS[stepKey]) {
+              const targetStep = STEPS[stepKey];
+              setStep(targetStep.id);
+
+              // Mapping of allowed paths for each step to prevent redirect loops
+              const ALLOWED_PATHS_FOR_STEP = {
+                consent: ['/consent'],
+                rei: ['/rei'],
+                crt: ['/crt'],
+                stimulus: ['/stimulus'],
+                free_recall: ['/free-recall'],
+                structured: ['/structured'],
+                thank_you: ['/thank-you'],
+                session2: ['/session2', '/structured'],
+                results: ['/results']
+              };
+
+              const allowedPaths = ALLOWED_PATHS_FOR_STEP[progress.current_step] || [];
+              const isPathAllowed = allowedPaths.some(p => {
+                const pattern = p.replace(':sessionId', progress.session_id);
+                return location.pathname === pattern || location.pathname.startsWith(pattern.replace('/:sessionId', ''));
+              });
+
+              if (!isPathAllowed) {
+                let targetPath = targetStep.path;
+                if (targetPath.includes(':sessionId')) {
+                  targetPath = targetPath.replace(':sessionId', progress.session_id);
+                }
+                navigate(targetPath);
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Failed to restore progress:", err);
+        }
+      }
+    }
+    if (!authLoading) {
+      restoreProgress();
+    }
+  }, [user, authLoading, setSession, setStep, navigate, location.pathname]);
   const isSession1 = currentStep >= 1 && currentStep <= SESSION1_TOTAL_STEPS;
   const progress = isSession1 ? (currentStep / SESSION1_TOTAL_STEPS) * 100 : 0;
-
-  // Don't show header on landing page
   const showHeader = location.pathname !== '/';
-
   return (
     <div className="app">
       {showHeader && (
@@ -59,21 +107,20 @@ function App() {
           )}
         </>
       )}
-
       <Routes>
-        <Route path={STEPS.LANDING.path}     element={<LandingPage />} />
-        <Route path={STEPS.CONSENT.path}     element={<ConsentPage />} />
-        <Route path={STEPS.REI.path}         element={<REIPage />} />
-        <Route path={STEPS.CRT.path}         element={<CRTPage />} />
-        <Route path={STEPS.STIMULUS.path}    element={<StimulusPage />} />
+        <Route path={STEPS.LANDING.path} element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path={STEPS.CONSENT.path} element={<ConsentPage />} />
+        <Route path={STEPS.REI.path} element={<REIPage />} />
+        <Route path={STEPS.CRT.path} element={<CRTPage />} />
+        <Route path={STEPS.STIMULUS.path} element={<StimulusPage />} />
         <Route path={STEPS.FREE_RECALL.path} element={<FreeRecallPage />} />
-        <Route path={STEPS.STRUCTURED.path}  element={<StructuredQuestionsPage />} />
-        <Route path={STEPS.THANK_YOU.path}   element={<ThankYouPage />} />
-        <Route path={STEPS.SESSION2.path}    element={<Session2Page />} />
-        <Route path={STEPS.RESULTS.path}     element={<ResultsPage />} />
+        <Route path={STEPS.STRUCTURED.path} element={<StructuredQuestionsPage />} />
+        <Route path={STEPS.THANK_YOU.path} element={<ThankYouPage />} />
+        <Route path={STEPS.SESSION2.path} element={<Session2Page />} />
+        <Route path={STEPS.RESULTS.path} element={<ResultsPage />} />
       </Routes>
     </div>
   );
 }
-
 export default App;

@@ -20,6 +20,11 @@ const api = axios.create({
 // ── Request Interceptor ──────────────────────────────────────────
 api.interceptors.request.use(
   (config) => {
+    // Attach JWT token if stored
+    const token = localStorage.getItem('ntx_auth_token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
     console.log("[Axios Request]", config.method.toUpperCase(), config.url, config.data);
     return config;
   },

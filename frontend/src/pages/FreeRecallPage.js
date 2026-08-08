@@ -46,12 +46,15 @@ function FreeRecallPage() {
     try {
       await responseService.submitFreeRecall(sessionId, text, elapsed);
       setStep(STEPS.STRUCTURED.id);
+      setLoading(false);
       navigate(STEPS.STRUCTURED.path);
     } catch (err) {
       setError(err.message);
       setLoading(false);
     }
   };
+
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
 
   return (
     <div className="page animate-fade-in">
@@ -61,34 +64,49 @@ function FreeRecallPage() {
       </div>
 
       <div className="page__content">
-        <div className="card mb-6">
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
-            In as much detail as possible, describe everything you remember about what
-            you just watched. Include what happened, what was said, how the characters
-            seemed to feel, and anything else that stands out to you.
-          </p>
-          <p className="text-sm" style={{ color: 'var(--color-text-accent)' }}>
-            Please take at least 3 minutes.
-          </p>
-        </div>
+        {/* Instructions */}
+        <p style={{
+          fontSize: 'var(--text-sm)', color: 'var(--color-text-tertiary)',
+          lineHeight: 1.7, marginBottom: '0.5rem',
+        }}>
+          In as much detail as possible, describe everything you remember — what happened,
+          what was said, how the characters seemed to feel, and anything else that stands out.
+        </p>
+        <p style={{
+          fontSize: 'var(--text-xs)', color: 'var(--color-accent)',
+          marginBottom: '1.5rem', fontWeight: 500,
+        }}>
+          Minimum 3 minutes required before submission.
+        </p>
 
+        {/* Textarea */}
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Start writing your recollection here..."
-          style={{ minHeight: '250px', marginBottom: '1rem' }}
+          style={{
+            minHeight: '240px', marginBottom: '1rem',
+            fontSize: 'var(--text-base)', lineHeight: 1.7,
+          }}
           autoFocus
         />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        {/* Footer row */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between',
+          alignItems: 'center', marginBottom: '1.5rem',
+        }}>
           <Timer seconds={elapsed} minSeconds={MIN_SECONDS} />
-          <span className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
-            {text.split(/\s+/).filter(Boolean).length} words
+          <span style={{
+            fontSize: 'var(--text-xs)', color: 'var(--color-text-disabled)',
+            fontFamily: 'var(--font-mono)',
+          }}>
+            {wordCount} {wordCount === 1 ? 'word' : 'words'}
           </span>
         </div>
 
         {error && (
-          <p className="text-error text-sm mb-4">{error}</p>
+          <p style={{ color: 'var(--color-error)', fontSize: 'var(--text-xs)', marginBottom: '1rem' }}>{error}</p>
         )}
 
         <button
@@ -97,7 +115,7 @@ function FreeRecallPage() {
           disabled={!canSubmit}
           style={{ width: '100%' }}
         >
-          {elapsed < MIN_SECONDS ? `Wait ${formatTime(MIN_SECONDS - elapsed)}` : 'Submit Recall →'}
+          {elapsed < MIN_SECONDS ? `Wait ${formatTime(MIN_SECONDS - elapsed)}` : 'Submit recall'}
         </button>
       </div>
     </div>
