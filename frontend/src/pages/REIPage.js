@@ -4,11 +4,12 @@
  * All items must be answered before proceeding.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
 import responseService from '../services/responseService';
+import { useAuth } from '../context/AuthContext';
 
 import QuestionCard from '../components/questionnaire/QuestionCard';
 import { REI_QUESTIONS } from '../constants/reiQuestions';
@@ -16,9 +17,33 @@ import { REI_QUESTIONS } from '../constants/reiQuestions';
 function REIPage() {
   const navigate = useNavigate();
   const { sessionId, setREIScores, setStep, setLoading, isLoading } = useSessionContext();
+  const { user } = useAuth();
+
+  const cacheKey = user?.id ? `neurotracex_rei_answers_${user.id}` : null;
 
   const [answers, setAnswers] = useState(new Array(REI_QUESTIONS.length).fill(0));
   const [error, setError] = useState(null);
+
+  // Restore answers from cache once user details are loaded
+  useEffect(() => {
+    if (cacheKey) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          setAnswers(JSON.parse(cached));
+        } catch (e) {
+          console.error("Failed to parse cached REI answers:", e);
+        }
+      }
+    }
+  }, [cacheKey]);
+
+  // Persist answers to cache on change
+  useEffect(() => {
+    if (cacheKey && answers.some((a) => a > 0)) {
+      localStorage.setItem(cacheKey, JSON.stringify(answers));
+    }
+  }, [answers, cacheKey]);
 
   const allAnswered = answers.every((a) => a >= 1 && a <= 5);
   const answeredCount = answers.filter((a) => a >= 1).length;
@@ -37,6 +62,12 @@ function REIPage() {
 
     try {
       const response = await responseService.submitREI(sessionId, answers);
+      
+      // Clear cache on successful submission
+      if (cacheKey) {
+        localStorage.removeItem(cacheKey);
+      }
+      
       setLoading(false);
 
       setREIScores({

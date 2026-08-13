@@ -15,6 +15,7 @@ const initialState = {
   participant: null,
   reiScores: null,
   crtScore: null,
+  structuredQIndex: 0,
   isLoading: false,
   error: null,
 };
@@ -27,6 +28,7 @@ const ACTIONS = {
   SET_PARTICIPANT:  'SET_PARTICIPANT',
   SET_REI_SCORES:   'SET_REI_SCORES',
   SET_CRT_SCORE:    'SET_CRT_SCORE',
+  SET_STRUCTURED_Q_INDEX: 'SET_STRUCTURED_Q_INDEX',
   SET_LOADING:      'SET_LOADING',
   SET_ERROR:        'SET_ERROR',
   RESET:            'RESET',
@@ -53,6 +55,9 @@ function sessionReducer(state, action) {
 
     case ACTIONS.SET_CRT_SCORE:
       return { ...state, crtScore: action.payload };
+
+    case ACTIONS.SET_STRUCTURED_Q_INDEX:
+      return { ...state, structuredQIndex: action.payload };
 
     case ACTIONS.SET_LOADING:
       return { ...state, isLoading: action.payload };
@@ -88,12 +93,13 @@ export function SessionProvider({ children }) {
         sessionNumber: state.sessionNumber,
         reiScores: state.reiScores,
         crtScore: state.crtScore,
+        structuredQIndex: state.structuredQIndex,
       }));
       console.log("[SessionContext useEffect] persisted successfully");
     } catch (e) {
       console.error("[SessionContext useEffect] persist failed:", e);
     }
-  }, [state.sessionId, state.currentStep, state.sessionNumber, state.reiScores, state.crtScore]);
+  }, [state.sessionId, state.currentStep, state.sessionNumber, state.reiScores, state.crtScore, state.structuredQIndex]);
 
   // ── Action Creators ──────────────────────────────────────────
   const actions = {
@@ -103,6 +109,7 @@ export function SessionProvider({ children }) {
     setParticipant: (p) => dispatch({ type: ACTIONS.SET_PARTICIPANT, payload: p }),
     setREIScores: (s) => dispatch({ type: ACTIONS.SET_REI_SCORES, payload: s }),
     setCRTScore: (s) => dispatch({ type: ACTIONS.SET_CRT_SCORE, payload: s }),
+    setStructuredQIndex: (idx) => dispatch({ type: ACTIONS.SET_STRUCTURED_Q_INDEX, payload: idx }),
     setLoading: (v) => dispatch({ type: ACTIONS.SET_LOADING, payload: v }),
     setError: (e) => dispatch({ type: ACTIONS.SET_ERROR, payload: e }),
     reset: () => {

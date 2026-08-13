@@ -59,3 +59,4 @@ class ParticipantProgressResponse(BaseModel):
     session2_completed: bool
     session2_available_at: datetime | None = None
     time_remaining_seconds: int | None = None
+    structured_q_index: int | None = None

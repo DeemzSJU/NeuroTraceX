@@ -27,8 +27,13 @@ import ResultsPage from './pages/ResultsPage';
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loading: authLoading } = useAuth();
-  const { sessionId, setSession, setStep, currentStep } = useSessionContext();
+  const { user, signOut, loading: authLoading } = useAuth();
+  const { sessionId, setSession, setStep, setStructuredQIndex, currentStep } = useSessionContext();
+
+  const handleLogout = () => {
+    signOut();
+    navigate('/');
+  };
   useEffect(() => {
     async function restoreProgress() {
       if (user?.id) {
@@ -36,6 +41,9 @@ function App() {
           const progress = await participantService.getProgress(user.id);
           if (progress.has_consented && progress.session_id) {
             setSession(progress.session_id);
+            if (progress.structured_q_index !== undefined && progress.structured_q_index !== null) {
+              setStructuredQIndex(progress.structured_q_index);
+            }
 
             const stepKey = progress.current_step.toUpperCase();
             if (STEPS[stepKey]) {
@@ -95,6 +103,11 @@ function App() {
               <span className="app-header__step">
                 Step {currentStep} of {SESSION1_TOTAL_STEPS}
               </span>
+            )}
+            {user && (
+              <button className="btn-logout" onClick={handleLogout}>
+                Logout
+              </button>
             )}
           </header>
           {isSession1 && (

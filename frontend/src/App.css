@@ -91,6 +91,24 @@
   letter-spacing: 0.02em;
 }
 
+.btn-logout {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.375rem 0.75rem;
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.btn-logout:hover {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
 /* ── Buttons ──────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;

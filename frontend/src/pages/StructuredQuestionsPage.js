@@ -1,10 +1,4 @@
-/**
- * NeuroTraceX — Structured Questions Page (Step 5)
- * 20 questions presented one at a time.
- * Used for both Session 1 (immediate) and Session 2 (delayed) recall.
- */
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
@@ -12,16 +6,45 @@ import { STRUCTURED_QUESTIONS } from '../constants/structuredQuestions';
 import responseService from '../services/responseService';
 import scoreService from '../services/scoreService';
 import participantService from '../services/participantService';
+import { useAuth } from '../context/AuthContext';
 
 
 function StructuredQuestionsPage() {
   const navigate = useNavigate();
-  const { sessionId, setStep, currentStep } = useSessionContext();
+  const { sessionId, setStep, currentStep, structuredQIndex } = useSessionContext();
+  const { user } = useAuth();
 
   const [currentQ, setCurrentQ] = useState(0);
   const [answer, setAnswer] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const questionStartRef = useRef(Date.now());
+
+  const cacheKey = user?.id ? `neurotracex_structured_answer_${user.id}_${currentQ}` : null;
+
+  // Restore current question index from database progress
+  useEffect(() => {
+    if (structuredQIndex !== undefined && structuredQIndex !== null) {
+      setCurrentQ(structuredQIndex);
+    }
+  }, [structuredQIndex]);
+
+  // Load draft answer for the current question
+  useEffect(() => {
+    if (cacheKey) {
+      const cached = localStorage.getItem(cacheKey);
+      setAnswer(cached || '');
+    } else {
+      setAnswer('');
+    }
+    questionStartRef.current = Date.now();
+  }, [currentQ, cacheKey]);
+
+  // Persist draft answer to cache on change
+  useEffect(() => {
+    if (cacheKey && answer.trim().length > 0) {
+      localStorage.setItem(cacheKey, answer);
+    }
+  }, [answer, cacheKey]);
 
   // Determine session number from context
   const sessionNumber = currentStep === STEPS.SESSION2.id ? 2 : 1;
@@ -44,10 +67,13 @@ function StructuredQuestionsPage() {
         sessionNumber
       );
 
+      // Clear draft cache for this question
+      if (cacheKey) {
+        localStorage.removeItem(cacheKey);
+      }
+
       if (currentQ + 1 < totalQuestions) {
         setCurrentQ(currentQ + 1);
-        setAnswer('');
-        questionStartRef.current = Date.now();
       } else {
         // All questions done
         if (sessionNumber === 1) {

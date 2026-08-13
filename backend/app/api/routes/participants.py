@@ -159,6 +159,15 @@ async def get_participant_progress(
         if time_remaining_seconds <= 0 and current_step == "thank_you":
             current_step = "session2"
 
+    # Calculate how many structured questions have been answered for the current session
+    structured_types = {QuestionType.FACTUAL, QuestionType.INTERPRETIVE, QuestionType.EMOTIONAL}
+    session_number = 2 if current_step in ("session2", "results") else 1
+    structured_responses = [
+        r for r in responses
+        if r.question_type in structured_types and r.session_number == session_number
+    ]
+    structured_q_index = len(structured_responses)
+
     return ParticipantProgressResponse(
         has_consented=True,
         session_id=participant.session_id,
@@ -170,6 +179,7 @@ async def get_participant_progress(
         session2_completed=participant.session2_completed,
         session2_available_at=session2_available_at,
         time_remaining_seconds=time_remaining_seconds,
+        structured_q_index=structured_q_index,
     )
 
 
