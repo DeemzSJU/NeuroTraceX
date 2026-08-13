@@ -3,11 +3,12 @@
  * Cognitive Reflection Test — 3 items.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
 import responseService from '../services/responseService';
+import { useAuth } from '../context/AuthContext';
 
 import QuestionCard from '../components/questionnaire/QuestionCard';
 import { CRT_QUESTIONS } from '../constants/crtQuestions';
@@ -15,9 +16,33 @@ import { CRT_QUESTIONS } from '../constants/crtQuestions';
 function CRTPage() {
   const navigate = useNavigate();
   const { sessionId, setCRTScore, setStep, setLoading, isLoading } = useSessionContext();
+  const { user } = useAuth();
+
+  const cacheKey = user?.id ? `neurotracex_crt_answers_${user.id}` : null;
 
   const [answers, setAnswers] = useState(['', '', '']);
   const [error, setError] = useState(null);
+
+  // Restore answers from cache once user details are loaded
+  useEffect(() => {
+    if (cacheKey) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          setAnswers(JSON.parse(cached));
+        } catch (e) {
+          console.error("Failed to parse cached CRT answers:", e);
+        }
+      }
+    }
+  }, [cacheKey]);
+
+  // Persist answers to cache on change
+  useEffect(() => {
+    if (cacheKey && answers.some((a) => a.trim().length > 0)) {
+      localStorage.setItem(cacheKey, JSON.stringify(answers));
+    }
+  }, [answers, cacheKey]);
 
   const allAnswered = answers.every((a) => a.trim().length > 0);
 
@@ -35,6 +60,12 @@ function CRTPage() {
 
     try {
       const response = await responseService.submitCRT(sessionId, answers);
+      
+      // Clear cache on successful submission
+      if (cacheKey) {
+        localStorage.removeItem(cacheKey);
+      }
+      
       setCRTScore(response.crt_score);
       setStep(STEPS.STIMULUS.id);
       setLoading(false);

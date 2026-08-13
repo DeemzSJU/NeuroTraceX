@@ -8,17 +8,53 @@ import { useNavigate } from 'react-router-dom';
 import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
 import responseService from '../services/responseService';
+import { useAuth } from '../context/AuthContext';
 
 import Timer from '../components/common/Timer';
 
 function FreeRecallPage() {
   const navigate = useNavigate();
   const { sessionId, setStep, setLoading, isLoading } = useSessionContext();
+  const { user } = useAuth();
+
+  const cacheKey = user?.id ? `neurotracex_recall_text_${user.id}` : null;
 
   const [text, setText] = useState('');
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState(null);
   const startTimeRef = useRef(Date.now());
+
+  // Restore text and elapsed from cache once user details are loaded
+  useEffect(() => {
+    if (cacheKey) {
+      const cachedText = localStorage.getItem(`neurotracex_recall_text_${user.id}`);
+      if (cachedText) {
+        setText(cachedText);
+      }
+      const cachedElapsed = localStorage.getItem(`neurotracex_recall_elapsed_${user.id}`);
+      if (cachedElapsed) {
+        const val = parseInt(cachedElapsed, 10);
+        if (!isNaN(val)) {
+          setElapsed(val);
+          startTimeRef.current = Date.now() - val * 1000;
+        }
+      }
+    }
+  }, [cacheKey]);
+
+  // Persist text to cache on change
+  useEffect(() => {
+    if (cacheKey && text.trim().length > 0) {
+      localStorage.setItem(`neurotracex_recall_text_${user.id}`, text);
+    }
+  }, [text, cacheKey]);
+
+  // Persist elapsed to cache on change
+  useEffect(() => {
+    if (cacheKey && elapsed > 0) {
+      localStorage.setItem(`neurotracex_recall_elapsed_${user.id}`, String(elapsed));
+    }
+  }, [elapsed, cacheKey]);
 
   const MIN_SECONDS = 180; // 3 minutes
   const canSubmit = elapsed >= MIN_SECONDS && text.trim().length > 0 && !isLoading;
@@ -45,6 +81,13 @@ function FreeRecallPage() {
 
     try {
       await responseService.submitFreeRecall(sessionId, text, elapsed);
+      
+      // Clear cache on successful submission
+      if (cacheKey) {
+        localStorage.removeItem(`neurotracex_recall_text_${user.id}`);
+        localStorage.removeItem(`neurotracex_recall_elapsed_${user.id}`);
+      }
+      
       setStep(STEPS.STRUCTURED.id);
       setLoading(false);
       navigate(STEPS.STRUCTURED.path);
