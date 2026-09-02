@@ -59,8 +59,8 @@ function App() {
                 free_recall: ['/free-recall'],
                 structured: ['/structured'],
                 thank_you: ['/thank-you'],
-                session2: ['/session2', '/structured'],
-                results: ['/results']
+                session2: ['/session2', '/structured', '/results'],
+                results: ['/results'],
               };
 
               const allowedPaths = ALLOWED_PATHS_FOR_STEP[progress.current_step] || [];

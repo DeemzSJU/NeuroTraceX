@@ -18,17 +18,31 @@ function ResultsPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchResults() {
+    let cancelled = false;
+
+    async function fetchResults(attempt = 0) {
       try {
         const data = await scoreService.getResults(sessionId);
+        if (cancelled) return;
+
+        // If scores aren't ready yet (all null), retry up to 5 times
+        const scores = data?.scores || {};
+        const hasData = scores.rei_experiential != null || scores.factual_divergence != null;
+        if (!hasData && attempt < 5) {
+          setTimeout(() => fetchResults(attempt + 1), 2000);
+          return;
+        }
+
         setResults(data);
       } catch (err) {
-        setError(err.message);
+        if (!cancelled) setError(err.message);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
+
     fetchResults();
+    return () => { cancelled = true; };
   }, [sessionId]);
 
   if (loading) {

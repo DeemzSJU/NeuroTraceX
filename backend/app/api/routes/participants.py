@@ -151,11 +151,12 @@ async def get_participant_progress(
         if completion_time.tzinfo is None:
             completion_time = completion_time.replace(tzinfo=dt.timezone.utc)
         
-        session2_available_at = completion_time + dt.timedelta(hours=48)
+        # NOTE: Changed to 1 minute for faculty demo (originally 48 hours)
+        session2_available_at = completion_time + dt.timedelta(minutes=1)
         now = dt.datetime.now(dt.timezone.utc)
         time_remaining_seconds = int((session2_available_at - now).total_seconds())
         
-        # If 48 hours have passed and session 2 hasn't been completed yet
+        # If wait time has passed and session 2 hasn't been completed yet
         if time_remaining_seconds <= 0 and current_step == "thank_you":
             current_step = "session2"
 
@@ -211,6 +212,38 @@ async def complete_session1(
     participant.session1_completed = True
     participant.session1_completed_at = dt.datetime.now(dt.timezone.utc)
     
+    db.add(participant)
+    await db.flush()
+
+    return participant
+
+
+@router.post(
+    "/session2/complete",
+    response_model=ParticipantResponse,
+    summary="Mark Session 2 as completed",
+)
+async def complete_session2(
+    data: SessionCompleteRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Mark Session 2 as completed so the progress tracker returns 'results'
+    instead of 'session2', preventing redirect loops.
+    """
+    result = await db.execute(
+        select(Participant).where(Participant.session_id == data.session_id)
+    )
+    participant = result.scalar_one_or_none()
+
+    if participant is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Participant not found.",
+        )
+
+    participant.session2_completed = True
+
     db.add(participant)
     await db.flush()
 

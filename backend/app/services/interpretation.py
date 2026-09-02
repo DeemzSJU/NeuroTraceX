@@ -8,7 +8,12 @@ times out, or if the sample size is below the configured threshold.
 """
 
 import logging
-from groq import AsyncGroq
+
+try:
+    from groq import AsyncGroq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
 
 from app.config import get_settings
 from app.services.interpret_static import generate_static_interpretation
@@ -48,8 +53,8 @@ async def get_ai_interpretation(
             factual_div, interpretive_div, emotional_div
         )
 
-    if not settings.groq_api_key:
-        logger.warning("Groq API key is not configured. Using static fallback.")
+    if not GROQ_AVAILABLE or not settings.groq_api_key:
+        logger.warning("Groq library or API key is not configured. Using static fallback.")
         return generate_static_interpretation(
             rei_experiential, rei_rational, crt_score,
             factual_div, interpretive_div, emotional_div

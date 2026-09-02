@@ -36,7 +36,8 @@ function Session2Page() {
   }, [sessionId, setSession, setStep]);
 
   const handleBegin = () => {
-    navigate(STEPS.STRUCTURED.path);
+    // Pass sessionNumber=2 via router state so StructuredQuestionsPage knows
+    navigate(STEPS.STRUCTURED.path, { state: { sessionNumber: 2, sessionId } });
   };
 
   if (loading) {

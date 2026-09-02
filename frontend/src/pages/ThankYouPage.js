@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSessionContext } from '../context/SessionContext';
@@ -14,9 +14,10 @@ function ThankYouPage() {
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [session2Available, setSession2Available] = useState(false);
 
-  useEffect(() => {
-    let timerId = null;
+  // Use a ref so the setInterval callback always has the latest timerId
+  const timerRef = useRef(null);
 
+  useEffect(() => {
     async function fetchProgress() {
       if (user?.id) {
         try {
@@ -27,10 +28,14 @@ function ThankYouPage() {
               setTimeRemaining(tr);
               setSession2Available(false);
 
-              timerId = setInterval(() => {
+              // Clear any previous interval before starting a new one
+              if (timerRef.current) clearInterval(timerRef.current);
+
+              timerRef.current = setInterval(() => {
                 setTimeRemaining((prev) => {
                   if (prev <= 1) {
-                    clearInterval(timerId);
+                    clearInterval(timerRef.current);
+                    timerRef.current = null;
                     setSession2Available(true);
                     return 0;
                   }
@@ -55,7 +60,7 @@ function ThankYouPage() {
     fetchProgress();
 
     return () => {
-      if (timerId) clearInterval(timerId);
+      if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [user]);
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSessionContext } from '../context/SessionContext';
 import { STEPS } from '../constants/experimentFlow';
 import { STRUCTURED_QUESTIONS } from '../constants/structuredQuestions';
@@ -11,22 +11,32 @@ import { useAuth } from '../context/AuthContext';
 
 function StructuredQuestionsPage() {
   const navigate = useNavigate();
-  const { sessionId, setStep, currentStep, structuredQIndex } = useSessionContext();
+  const location = useLocation();
+  const { sessionId: contextSessionId, setStep, currentStep, structuredQIndex } = useSessionContext();
   const { user } = useAuth();
+
+  // Determine session number: prefer router state (set by Session2Page), fall back to context step
+  const routerState = location.state || {};
+  const sessionNumber = routerState.sessionNumber === 2 ? 2
+    : currentStep === STEPS.SESSION2.id ? 2
+    : 1;
+
+  // Prefer sessionId from router state (most reliable for session 2), fall back to context
+  const sessionId = routerState.sessionId || contextSessionId;
 
   const [currentQ, setCurrentQ] = useState(0);
   const [answer, setAnswer] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const questionStartRef = useRef(Date.now());
 
-  const cacheKey = user?.id ? `neurotracex_structured_answer_${user.id}_${currentQ}` : null;
+  const cacheKey = user?.id ? `neurotracex_structured_s${sessionNumber}_${user.id}_${currentQ}` : null;
 
-  // Restore current question index from database progress
+  // Restore current question index from database progress (session 1 only)
   useEffect(() => {
-    if (structuredQIndex !== undefined && structuredQIndex !== null) {
+    if (sessionNumber === 1 && structuredQIndex !== undefined && structuredQIndex !== null) {
       setCurrentQ(structuredQIndex);
     }
-  }, [structuredQIndex]);
+  }, [structuredQIndex, sessionNumber]);
 
   // Load draft answer for the current question
   useEffect(() => {
@@ -46,8 +56,7 @@ function StructuredQuestionsPage() {
     }
   }, [answer, cacheKey]);
 
-  // Determine session number from context
-  const sessionNumber = currentStep === STEPS.SESSION2.id ? 2 : 1;
+
   const totalQuestions = STRUCTURED_QUESTIONS.length;
   const question = STRUCTURED_QUESTIONS[currentQ];
 
@@ -85,7 +94,12 @@ function StructuredQuestionsPage() {
           setStep(STEPS.THANK_YOU.id);
           navigate(STEPS.THANK_YOU.path);
         } else {
-          // Trigger computation before results page navigation
+          // Session 2 done — mark complete in DB FIRST, then compute scores and navigate
+          try {
+            await participantService.completeSession2(sessionId);
+          } catch (e) {
+            console.error('Failed to mark Session 2 complete:', e);
+          }
           try {
             await scoreService.computeScores(sessionId);
           } catch (e) {
