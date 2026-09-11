@@ -18,7 +18,7 @@ export function ScoreCard({ title, value, subtitle, color = 'var(--color-accent)
       borderLeft: `3px solid ${color}`,
     }}>
       <span style={{
-        fontSize: 'var(--text-xs)', color: 'var(--color-text-disabled)',
+        fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)',
         fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em',
         marginBottom: '0.5rem',
       }}>
@@ -34,7 +34,7 @@ export function ScoreCard({ title, value, subtitle, color = 'var(--color-accent)
       </span>
       {subtitle && (
         <span style={{
-          fontSize: 'var(--text-xs)', color: 'var(--color-text-disabled)',
+          fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)',
         }}>
           {subtitle}
         </span>

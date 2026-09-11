@@ -56,7 +56,7 @@ function FreeRecallPage() {
     }
   }, [elapsed, cacheKey]);
 
-  const MIN_SECONDS = 180; // 3 minutes
+  const MIN_SECONDS = 60; // 1 minute
   const canSubmit = elapsed >= MIN_SECONDS && text.trim().length > 0 && !isLoading;
 
   // Timer
@@ -119,7 +119,7 @@ function FreeRecallPage() {
           fontSize: 'var(--text-xs)', color: 'var(--color-accent)',
           marginBottom: '1.5rem', fontWeight: 500,
         }}>
-          Minimum 3 minutes required before submission.
+          Minimum 1 minute required before submission.
         </p>
 
         {/* Textarea */}

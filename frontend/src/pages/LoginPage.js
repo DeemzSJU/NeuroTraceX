@@ -34,6 +34,13 @@ function LoginPage() {
     try {
       if (tab === TAB.REGISTER) {
         if (!name.trim()) { setError('Please enter your name.'); return; }
+        
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).+$/;
+        if (!passwordRegex.test(password)) {
+          setError('Password must contain at least 1 uppercase letter and 1 special character.');
+          return;
+        }
+
         await register(name.trim(), email.trim(), password);
       } else {
         await login(email.trim(), password);
@@ -131,7 +138,7 @@ function LoginPage() {
               <input
                 id="auth-password"
                 type="password"
-                placeholder={tab === TAB.REGISTER ? 'At least 6 characters' : '••••••••'}
+                placeholder={tab === TAB.REGISTER ? 'Min 6 chars, 1 uppercase, 1 special' : '••••••••'}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 autoComplete={tab === TAB.REGISTER ? 'new-password' : 'current-password'}

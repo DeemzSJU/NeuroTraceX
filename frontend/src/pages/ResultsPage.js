@@ -88,7 +88,7 @@ function ResultsPage() {
         <div>
           <h4 style={{
             fontSize: 'var(--text-xs)', fontWeight: 500,
-            color: 'var(--color-text-disabled)', textTransform: 'uppercase',
+            color: 'var(--color-text-secondary)', textTransform: 'uppercase',
             letterSpacing: '0.06em', marginBottom: '0.75rem',
           }}>
             Cognitive Style (REI-20)

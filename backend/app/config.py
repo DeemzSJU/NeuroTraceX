@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     resend_from_email: str = "noreply@neurotracex.com"
 
     # --- AI Interpretation ---
-    min_participants_for_ai: int = 20
+    min_participants_for_ai: int = 1
 
 
 @lru_cache

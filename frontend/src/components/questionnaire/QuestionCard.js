@@ -14,17 +14,28 @@ import LikertScale from './LikertScale';
  */
 export function QuestionCard({ number, text, type = 'likert', value, onChange, isLast = false }) {
   return (
-    <div style={{
-      padding: '1.125rem 0',
-      borderBottom: isLast ? 'none' : '1px solid var(--color-border-subtle)',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.875rem' }}>
+    <div className="card" style={{
+      marginBottom: isLast ? '0' : '1.25rem',
+      padding: '1.5rem',
+      transition: 'box-shadow 0.2s ease, transform 0.2s ease',
+    }}
+    onMouseEnter={e => {
+      e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+      e.currentTarget.style.transform = 'translateY(-2px)';
+    }}
+    onMouseLeave={e => {
+      e.currentTarget.style.boxShadow = 'var(--shadow-xs)';
+      e.currentTarget.style.transform = 'translateY(0)';
+    }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
         <span style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: 'var(--text-xs)',
-          color: 'var(--color-text-disabled)',
+          fontSize: 'var(--text-sm)',
+          fontWeight: 600,
+          color: 'var(--color-accent-muted)',
           minWidth: '1.5rem',
-          paddingTop: '0.15rem',
+          paddingTop: '0.1rem',
           textAlign: 'right',
         }}>
           {String(number).padStart(2, '0')}

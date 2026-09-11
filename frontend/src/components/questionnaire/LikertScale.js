@@ -21,8 +21,8 @@ export function LikertScale({ name, value = 0, onChange, disabled = false }) {
       }}>
         {/* Left label */}
         <span style={{
-          fontSize: '0.6875rem', color: 'var(--color-text-disabled)',
-          minWidth: '52px', textAlign: 'left', lineHeight: 1.2,
+          fontSize: '0.6875rem', color: 'var(--color-text-secondary)',
+          minWidth: '52px', textAlign: 'left', lineHeight: 1.2, fontWeight: 500,
         }}>
           Not true
         </span>
@@ -38,26 +38,7 @@ export function LikertScale({ name, value = 0, onChange, disabled = false }) {
                 disabled={disabled}
                 onClick={() => onChange(num)}
                 aria-label={`${num} out of 5`}
-                style={{
-                  width: '36px', height: '36px',
-                  borderRadius: '50%',
-                  border: isSelected
-                    ? '2px solid var(--color-accent)'
-                    : '1.5px solid var(--color-border-hover)',
-                  background: isSelected
-                    ? 'var(--color-accent-subtle)'
-                    : 'transparent',
-                  color: isSelected
-                    ? 'var(--color-accent)'
-                    : 'var(--color-text-tertiary)',
-                  cursor: disabled ? 'not-allowed' : 'pointer',
-                  transition: 'all 150ms ease',
-                  fontSize: 'var(--text-sm)',
-                  fontWeight: isSelected ? 600 : 400,
-                  fontFamily: 'var(--font-sans)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: 0,
-                }}
+                className={`likert-bubble ${isSelected ? 'selected' : ''}`}
               >
                 {num}
               </button>
@@ -67,8 +48,8 @@ export function LikertScale({ name, value = 0, onChange, disabled = false }) {
 
         {/* Right label */}
         <span style={{
-          fontSize: '0.6875rem', color: 'var(--color-text-disabled)',
-          minWidth: '52px', textAlign: 'right', lineHeight: 1.2,
+          fontSize: '0.6875rem', color: 'var(--color-text-secondary)',
+          minWidth: '52px', textAlign: 'right', lineHeight: 1.2, fontWeight: 500,
         }}>
           Very true
         </span>
