@@ -1,6 +1,6 @@
 /**
  * NeuroTraceX — Results Page
- * Displays personalised results: scores, divergence chart, AI interpretation.
+ * Displays personalised results: cognitive style scores, divergence chart, AI interpretation.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -48,7 +48,7 @@ function ResultsPage() {
   if (loading) {
     return (
       <div className="page" style={{ justifyContent: 'center', minHeight: '60vh' }}>
-        <Loader text="Analysing your cognitive profile..." size="lg" />
+        <Loader text="Synthesizing your cognitive and divergence profile..." size="lg" />
       </div>
     );
   }
@@ -63,7 +63,7 @@ function ResultsPage() {
           <div className="card" style={{ textAlign: 'center' }}>
             <p style={{ color: 'var(--color-error)', fontSize: 'var(--text-sm)' }}>{error}</p>
             <p style={{ color: 'var(--color-text-disabled)', fontSize: 'var(--text-xs)', marginTop: '0.75rem' }}>
-              Results may not be available yet. Please check back after completing Session 2.
+              Results may not be available yet. Please complete Session 1 structured recall questions to view your profile.
             </p>
           </div>
         </div>
@@ -72,14 +72,15 @@ function ResultsPage() {
   }
 
   const scores = results?.scores || {};
+  const cohortAverages = results?.cohort_averages || null;
 
   return (
     <div className="page animate-fade-in">
       <div className="page__header">
-        <h1>Your Results</h1>
+        <h1>Your Cognitive Profile</h1>
         <p>
           {results?.first_name ? `${results.first_name}, here` : 'Here'}'s what
-          your cognitive style reveals about how you construct reality.
+          your cognitive style and episodic memory reconstruction reveal about how you experience reality.
         </p>
       </div>
 
@@ -91,7 +92,7 @@ function ResultsPage() {
             color: 'var(--color-text-secondary)', textTransform: 'uppercase',
             letterSpacing: '0.06em', marginBottom: '0.75rem',
           }}>
-            Cognitive Style (REI-20)
+            Cognitive Style Baseline (REI-20 + CRT)
           </h4>
           <div style={{
             display: 'grid',
@@ -101,19 +102,19 @@ function ResultsPage() {
             <ScoreCard
               title="Experiential"
               value={scores.rei_experiential}
-              subtitle="Scale 1.0 to 5.0"
+              subtitle="Intuitive / Gut Feeling"
               color="var(--color-accent)"
             />
             <ScoreCard
               title="Rational"
               value={scores.rei_rational}
-              subtitle="Scale 1.0 to 5.0"
+              subtitle="Analytical / Deliberate"
               color="var(--color-primary)"
             />
             <ScoreCard
               title="CRT Score"
               value={scores.crt_score !== null && scores.crt_score !== undefined ? `${scores.crt_score} / 3` : '—'}
-              subtitle="Analytical Suppression"
+              subtitle="Impulse Suppression"
               color="var(--color-success)"
             />
           </div>
@@ -121,9 +122,12 @@ function ResultsPage() {
 
         {/* Divergence Chart */}
         <DivergenceChart
-          factual={scores.factual_divergence || 0}
-          interpretive={scores.interpretive_divergence || 0}
-          emotional={scores.emotional_divergence || 0}
+          factual={scores.factual_divergence ?? 0}
+          interpretive={scores.interpretive_divergence ?? 0}
+          emotional={scores.emotional_divergence ?? 0}
+          cohortAverages={cohortAverages}
+          overallImmediate={scores.overall_divergence_immediate}
+          overallDelayed={scores.overall_divergence_delayed}
         />
 
         {/* AI Interpretation */}
@@ -138,7 +142,7 @@ function ResultsPage() {
           marginTop: '0.5rem',
         }}>
           <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-disabled)', margin: 0 }}>
-            Based on data from {results?.total_participants ?? 0} study participants.
+            Calibrated against consensus data from {results?.total_participants ?? 0} study participants.
           </p>
         </div>
       </div>

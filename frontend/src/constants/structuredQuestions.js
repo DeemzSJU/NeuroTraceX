@@ -1,5 +1,5 @@
 /**
- * Structured Recall Questions (20 items total)
+ * Structured Recall Questions (20 items total) — Frank & April Scene
  * Categories:
  * - 7 Factual questions (scored against ground truth key)
  * - 7 Interpretive questions (scored against group consensus vector embeddings)
@@ -8,30 +8,31 @@
 
 export const STRUCTURED_QUESTIONS = [
   // Factual Questions (1-7)
-  { id: "q1", category: "factual", text: "What was the first thing Character A said when entering the scene?" },
-  { id: "q2", category: "factual", text: "What specific location or room were the two characters in?" },
-  { id: "q3", category: "factual", text: "What object or item was explicitly mentioned during their conversation?" },
-  { id: "q4", category: "factual", text: "Who initiated the topic of discussion, Character A or Character B?" },
-  { id: "q5", category: "factual", text: "What action did Character B take right before the audio clip ended?" },
-  { id: "q6", category: "factual", text: "What time of day or timeframe was mentioned in the dialogue?" },
-  { id: "q7", category: "factual", text: "What specific phrase or question did Character B repeat?" },
+  { id: "q1", category: "factual", text: "How many characters were present in the conversation?" },
+  { id: "q2", category: "factual", text: "Who spoke first?" },
+  { id: "q3", category: "factual", text: "What was the first thing said when the conversation began?" },
+  { id: "q4", category: "factual", text: "At what point did the tone shift noticeably?" },
+  { id: "q5", category: "factual", text: "What specific object or location was mentioned?" },
+  { id: "q6", category: "factual", text: "Who ended the conversation and how?" },
+  { id: "q7", category: "factual", text: "How long did the conversation appear to last?" },
 
   // Interpretive Questions (8-14)
-  { id: "q8", category: "interpretive", text: "Why do you think Character A decided to leave or disengage?" },
-  { id: "q9", category: "interpretive", text: "What do you believe was the main underlying source of conflict between the characters?" },
-  { id: "q10", category: "interpretive", text: "What nature of relationship exists between Character A and Character B?" },
-  { id: "q11", category: "interpretive", text: "Who do you think was primarily at fault for the misunderstanding?" },
-  { id: "q12", category: "interpretive", text: "What do you predict will happen between the two characters next?" },
-  { id: "q13", category: "interpretive", text: "What unspoken motive was Character A hiding from Character B?" },
-  { id: "q14", category: "interpretive", text: "How sincere was Character B during the climax of the conversation?" },
+  { id: "q8", category: "interpretive", text: "Why do you think Frank behaved the way he did?" },
+  { id: "q9", category: "interpretive", text: "What do you believe was the underlying reason for the conflict?" },
+  { id: "q10", category: "interpretive", text: "Do you think the two characters knew each other well before this conversation?" },
+  { id: "q11", category: "interpretive", text: "What do you think happened immediately before this conversation?" },
+  { id: "q12", category: "interpretive", text: "How do you think this conversation will affect their relationship going forward?" },
+  { id: "q13", category: "interpretive", text: "What do you think April truly wanted from this interaction?" },
+  { id: "q14", category: "interpretive", text: "If you had to give this conversation a title, what would it be and why?" },
 
   // Emotional Questions (15-20)
-  { id: "q15", category: "emotional", text: "How do you think Character A was feeling at the very start of the conversation?" },
-  { id: "q16", category: "emotional", text: "How do you think Character B was feeling by the end of the conversation?" },
-  { id: "q17", category: "emotional", text: "What overall emotional mood or tone best describes the interaction?" },
-  { id: "q18", category: "emotional", text: "How tense did you perceive the atmosphere between the characters to be?" },
-  { id: "q19", category: "emotional", text: "Did either character demonstrate genuine empathy during the conversation? Explain." },
-  { id: "q20", category: "emotional", text: "How did listening to this interaction make you feel emotionally?" }
+  { id: "q15", category: "emotional", text: "How do you think Frank was feeling at the start of the conversation?" },
+  { id: "q16", category: "emotional", text: "How do you think April was feeling by the end?" },
+  { id: "q17", category: "emotional", text: "Which character did you feel more sympathetic toward and why?" },
+  { id: "q18", category: "emotional", text: "What was the dominant emotional tone of the conversation overall?" },
+  { id: "q19", category: "emotional", text: "Was there a moment that felt particularly emotionally intense? Describe it." },
+  { id: "q20", category: "emotional", text: "How did the conversation make you feel as a listener?" }
 ];
 
 export default STRUCTURED_QUESTIONS;
+
